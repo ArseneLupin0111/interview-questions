@@ -1,3 +1,19 @@
+const THEME_KEY = "interview-theme";
+
+function getInitialTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === "dark" || saved === "light") return saved;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  const btn = document.getElementById("themeToggle");
+  if (btn) btn.textContent = theme === "dark" ? "☀️ Light" : "🌙 Dark";
+}
+
+applyTheme(getInitialTheme());
+
 const questions = window.INTERVIEW_QUESTIONS || [];
 const state = {
   filtered: [...questions],
@@ -255,3 +271,10 @@ searchInput.addEventListener("input", () => {
 
 initCategories();
 applyFilters();
+
+el("themeToggle").addEventListener("click", () => {
+  const current = document.documentElement.dataset.theme || "light";
+  const next = current === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+});
