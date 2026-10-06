@@ -2,7 +2,31 @@
 
 Bộ ghi chú ôn phỏng vấn được cá nhân hóa theo kinh nghiệm Node.js, React, TypeScript, PostgreSQL, Redis, MedusaJS, production troubleshooting và RAG.
 
-## Nội dung
+## Flashcard App
+
+Repo có một web app tĩnh trong thư mục [app](./app/):
+
+- lọc theo chủ đề và độ khó
+- tìm kiếm câu hỏi
+- random question
+- mock interview 10 câu
+- ẩn/hiện đáp án
+- đánh dấu Easy / Medium / Hard
+- lưu progress bằng localStorage
+
+### Chạy local
+
+```bash
+cd app
+python3 -m http.server 8000
+```
+
+Mở `http://localhost:8000`.
+
+Bạn cũng có thể publish thư mục `app/` bằng GitHub Pages nếu muốn có link mở trực tiếp trên điện thoại.
+
+## Nội dung Markdown
+
 - [Node.js](./01-nodejs.md)
 - [NestJS & REST](./02-nestjs-rest.md)
 - [PostgreSQL, ORM & SQL](./03-database.md)
@@ -14,6 +38,7 @@ Bộ ghi chú ôn phỏng vấn được cá nhân hóa theo kinh nghiệm Node.
 - [High Priority Questions](./09-high-priority.md)
 
 ## Cách ôn
+
 Mỗi câu nên trả lời theo 5 bước:
 
 ```text
