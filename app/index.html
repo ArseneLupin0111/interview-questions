@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Prep Flashcards</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div>
+        <p class="eyebrow">FULL STACK / BACKEND</p>
+        <h1>Interview Prep</h1>
+        <p class="subtitle">Flashcards + Mock Interview cho Node.js, Database, Redis, System Design, PostGifty và RAG.</p>
+      </div>
+      <button id="resetProgress" class="ghost">Reset progress</button>
+    </header>
+
+    <section class="toolbar">
+      <label>
+        Chủ đề
+        <select id="categoryFilter"></select>
+      </label>
+
+      <label>
+        Mức độ
+        <select id="difficultyFilter">
+          <option value="all">Tất cả</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+
+      <label class="search-wrap">
+        Tìm kiếm
+        <input id="searchInput" type="search" placeholder="Ví dụ: Redis, RAG, N+1..." />
+      </label>
+
+      <button id="randomBtn">Random question</button>
+      <button id="mockBtn" class="secondary">Mock 10 câu</button>
+    </section>
+
+    <section class="progress-panel">
+      <div><strong id="answeredCount">0</strong><span>Đã đánh giá</span></div>
+      <div><strong id="easyCount">0</strong><span>Easy</span></div>
+      <div><strong id="mediumCount">0</strong><span>Medium</span></div>
+      <div><strong id="hardCount">0</strong><span>Hard</span></div>
+    </section>
+
+    <section class="card" id="card">
+      <div class="card-meta">
+        <span id="categoryBadge"></span>
+        <span id="difficultyBadge"></span>
+        <span id="positionText"></span>
+      </div>
+
+      <h2 id="questionText"></h2>
+
+      <button id="showAnswerBtn" class="answer-btn">Hiện đáp án</button>
+
+      <div id="answerBox" class="answer hidden">
+        <h3>Trả lời gợi ý</h3>
+        <div id="answerText"></div>
+
+        <div id="projectBox" class="project-box hidden">
+          <h3>Liên hệ project</h3>
+          <div id="projectText"></div>
+        </div>
+
+        <div id="followupBox" class="followup-box hidden">
+          <h3>Follow-up</h3>
+          <ul id="followupList"></ul>
+        </div>
+      </div>
+
+      <div class="rating-row">
+        <span>Tự đánh giá:</span>
+        <button data-rating="easy" class="rating easy">Easy</button>
+        <button data-rating="medium" class="rating medium">Medium</button>
+        <button data-rating="hard" class="rating hard">Hard</button>
+      </div>
+
+      <div class="nav-row">
+        <button id="prevBtn" class="ghost">← Trước</button>
+        <button id="nextBtn">Tiếp →</button>
+      </div>
+    </section>
+
+    <section class="tips">
+      <h3>Cách luyện</h3>
+      <p>Trả lời thành tiếng trước khi bấm “Hiện đáp án”. Sau đó tự đánh giá. Ưu tiên ôn lại các câu Hard và Medium.</p>
+    </section>
+  </main>
+
+  <script src="./questions.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
