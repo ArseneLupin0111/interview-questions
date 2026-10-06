@@ -3,7 +3,10 @@ const state = {
   filtered: [...questions],
   currentIndex: 0,
   mockIds: null,
+  mode: localStorage.getItem("interview-mode") || "quiz",
   progress: JSON.parse(localStorage.getItem("interview-progress") || "{}"),
+  quizProgress: JSON.parse(localStorage.getItem("interview-quiz-progress") || "{}"),
+  shuffledChoices: {},
 };
 
 const el = id => document.getElementById(id);
@@ -13,6 +16,19 @@ const searchInput = el("searchInput");
 
 function saveProgress() {
   localStorage.setItem("interview-progress", JSON.stringify(state.progress));
+  localStorage.setItem("interview-quiz-progress", JSON.stringify(state.quizProgress));
+  localStorage.setItem("interview-mode", state.mode);
+}
+
+function shuffleWithCorrect(q) {
+  if (state.shuffledChoices[q.id]) return state.shuffledChoices[q.id];
+  const entries = q.choices.map((text, index) => ({ text, isCorrect: index === q.correctIndex }));
+  for (let i = entries.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [entries[i], entries[j]] = [entries[j], entries[i]];
+  }
+  state.shuffledChoices[q.id] = entries;
+  return entries;
 }
 
 function categories() {
@@ -30,20 +46,72 @@ function applyFilters() {
   const difficulty = difficultyFilter.value;
   const search = searchInput.value.trim().toLowerCase();
 
-  let source = state.mockIds
-    ? questions.filter(q => state.mockIds.includes(q.id))
-    : questions;
-
+  const source = state.mockIds ? questions.filter(q => state.mockIds.includes(q.id)) : questions;
   state.filtered = source.filter(q => {
     const byCategory = category === "all" || q.category === category;
     const byDifficulty = difficulty === "all" || q.difficulty === difficulty;
     const haystack = [q.q, q.a, q.project || "", ...(q.follow || [])].join(" ").toLowerCase();
-    const bySearch = !search || haystack.includes(search);
-    return byCategory && byDifficulty && bySearch;
+    return byCategory && byDifficulty && (!search || haystack.includes(search));
   });
 
   state.currentIndex = Math.min(state.currentIndex, Math.max(0, state.filtered.length - 1));
   render();
+}
+
+function renderQuiz(q) {
+  el("quizBox").classList.remove("hidden");
+  el("showAnswerBtn").classList.add("hidden");
+  el("ratingRow").classList.add("hidden");
+
+  const choices = shuffleWithCorrect(q);
+  const existing = state.quizProgress[q.id];
+  const letters = ["A", "B", "C", "D"];
+
+  el("choiceList").innerHTML = choices.map((c, i) => {
+    let cls = "choice-btn";
+    if (existing) {
+      if (c.isCorrect) cls += " correct";
+      else if (existing.selectedText === c.text) cls += " wrong";
+    }
+    return `<button class="${cls}" data-choice="${i}" ${existing ? "disabled" : ""}>
+      <span class="choice-letter">${letters[i]}</span>
+      <span>${c.text}</span>
+    </button>`;
+  }).join("");
+
+  const result = el("quizResult");
+  if (existing) {
+    result.classList.remove("hidden");
+    result.className = "quiz-result " + (existing.correct ? "result-correct" : "result-wrong");
+    result.textContent = existing.correct ? "✓ Chính xác" : "✕ Chưa đúng";
+    el("answerBox").classList.remove("hidden");
+  } else {
+    result.className = "quiz-result hidden";
+    el("answerBox").classList.add("hidden");
+  }
+
+  document.querySelectorAll(".choice-btn").forEach(btn => {
+    btn.addEventListener("click", () => selectChoice(q, Number(btn.dataset.choice)));
+  });
+}
+
+function selectChoice(q, index) {
+  const choices = shuffleWithCorrect(q);
+  const selected = choices[index];
+  state.quizProgress[q.id] = {
+    correct: selected.isCorrect,
+    selectedText: selected.text,
+  };
+  saveProgress();
+  render();
+}
+
+function renderFlashcard() {
+  el("quizBox").classList.add("hidden");
+  el("showAnswerBtn").classList.remove("hidden");
+  el("ratingRow").classList.remove("hidden");
+  el("answerBox").classList.add("hidden");
+  el("showAnswerBtn").textContent = "Hiện đáp án";
 }
 
 function render() {
@@ -55,42 +123,66 @@ function render() {
   el("difficultyBadge").textContent = noQuestion ? "—" : q.difficulty.toUpperCase();
   el("positionText").textContent = noQuestion ? "0 / 0" : `${state.currentIndex + 1} / ${state.filtered.length}`;
 
-  el("answerText").textContent = noQuestion ? "" : q.a;
-  el("answerBox").classList.add("hidden");
-  el("showAnswerBtn").textContent = "Hiện đáp án";
-  el("showAnswerBtn").disabled = noQuestion;
+  el("quizModeBtn").classList.toggle("active", state.mode === "quiz");
+  el("flashModeBtn").classList.toggle("active", state.mode === "flash");
 
-  const projectBox = el("projectBox");
-  if (!noQuestion && q.project) {
-    projectBox.classList.remove("hidden");
+  if (noQuestion) {
+    el("quizBox").classList.add("hidden");
+    el("showAnswerBtn").classList.add("hidden");
+    el("answerBox").classList.add("hidden");
+    updateStats();
+    return;
+  }
+
+  el("answerText").textContent = q.a;
+
+  if (q.project) {
+    el("projectBox").classList.remove("hidden");
     el("projectText").textContent = q.project;
   } else {
-    projectBox.classList.add("hidden");
+    el("projectBox").classList.add("hidden");
   }
 
-  const followupBox = el("followupBox");
-  if (!noQuestion && q.follow?.length) {
-    followupBox.classList.remove("hidden");
+  if (q.follow?.length) {
+    el("followupBox").classList.remove("hidden");
     el("followupList").innerHTML = q.follow.map(x => `<li>${x}</li>`).join("");
   } else {
-    followupBox.classList.add("hidden");
+    el("followupBox").classList.add("hidden");
   }
 
+  if (state.mode === "quiz" && q.choices?.length) renderQuiz(q);
+  else renderFlashcard();
+
   document.querySelectorAll(".rating").forEach(btn => {
-    btn.classList.toggle("active", !noQuestion && state.progress[q.id] === btn.dataset.rating);
-    btn.disabled = noQuestion;
+    btn.classList.toggle("active", state.progress[q.id] === btn.dataset.rating);
   });
 
   updateStats();
 }
 
 function updateStats() {
-  const values = Object.values(state.progress);
-  el("answeredCount").textContent = values.length;
-  el("easyCount").textContent = values.filter(v => v === "easy").length;
-  el("mediumCount").textContent = values.filter(v => v === "medium").length;
-  el("hardCount").textContent = values.filter(v => v === "hard").length;
+  const ratings = Object.values(state.progress);
+  const quiz = Object.values(state.quizProgress);
+  const correct = quiz.filter(x => x.correct).length;
+  const wrong = quiz.length - correct;
+
+  el("answeredCount").textContent = ratings.length;
+  el("correctCount").textContent = correct;
+  el("wrongCount").textContent = wrong;
+  el("accuracyText").textContent = quiz.length ? Math.round(correct / quiz.length * 100) + "%" : "0%";
 }
+
+el("quizModeBtn").addEventListener("click", () => {
+  state.mode = "quiz";
+  saveProgress();
+  render();
+});
+
+el("flashModeBtn").addEventListener("click", () => {
+  state.mode = "flash";
+  saveProgress();
+  render();
+});
 
 el("showAnswerBtn").addEventListener("click", () => {
   el("answerBox").classList.toggle("hidden");
@@ -123,12 +215,15 @@ el("mockBtn").addEventListener("click", () => {
   difficultyFilter.value = "all";
   searchInput.value = "";
   state.currentIndex = 0;
+  state.shuffledChoices = {};
   applyFilters();
   el("mockBtn").textContent = "Mock mode: 10 câu";
 });
 
 el("resetProgress").addEventListener("click", () => {
   state.progress = {};
+  state.quizProgress = {};
+  state.shuffledChoices = {};
   saveProgress();
   render();
 });
@@ -145,6 +240,7 @@ document.querySelectorAll(".rating").forEach(btn => {
 
 [categoryFilter, difficultyFilter].forEach(node => node.addEventListener("change", () => {
   state.mockIds = null;
+  state.shuffledChoices = {};
   el("mockBtn").textContent = "Mock 10 câu";
   state.currentIndex = 0;
   applyFilters();
