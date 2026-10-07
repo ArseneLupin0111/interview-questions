@@ -483,5 +483,411 @@ window.INTERVIEW_QUESTIONS = [
       "SSR chỉ dùng cho mobile app."
     ],
     "correctIndex": 0
+  },
+  {
+    "id": "node-process-nexttick",
+    "category": "Node.js",
+    "difficulty": "medium",
+    "q": "process.nextTick(), Promise microtask và setTimeout khác nhau thế nào trong Node.js?",
+    "a": "Ba cơ chế này đều liên quan đến việc hoãn thực thi, nhưng chúng được xử lý ở các thời điểm khác nhau.\n\nprocess.nextTick():\n- callback được ưu tiên chạy ngay sau khi call stack hiện tại hoàn tất;\n- trong Node.js, nextTick queue được xử lý trước các microtask Promise thông thường.\n\nPromise.then()/queueMicrotask():\n- chạy trong microtask queue;\n- thường chạy trước timer như setTimeout.\n\nsetTimeout(fn, 0):\n- không có nghĩa là chạy ngay;\n- callback phải chờ đến timer phase và chỉ chạy khi Event Loop có cơ hội xử lý.\n\nVí dụ thứ tự thường thấy:\nsync code → process.nextTick → Promise.then → setTimeout.\n\nĐiểm cần nhớ khi interview: lạm dụng process.nextTick có thể làm Event Loop bị starvation vì các callback nextTick liên tục được ưu tiên trước khi chuyển sang phase khác.",
+    "choices": [
+      "process.nextTick thường được xử lý trước Promise microtask, còn setTimeout phải chờ timer phase.",
+      "setTimeout(0) luôn chạy trước Promise.then.",
+      "Promise.then và setTimeout hoàn toàn giống nhau.",
+      "process.nextTick tạo một OS thread riêng."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Microtask starvation là gì?",
+      "setImmediate khác setTimeout(0) thế nào?"
+    ]
+  },
+  {
+    "id": "node-stream",
+    "category": "Node.js",
+    "difficulty": "medium",
+    "q": "Stream trong Node.js là gì và khi nào nên dùng?",
+    "a": "Stream cho phép xử lý dữ liệu theo từng phần nhỏ thay vì phải load toàn bộ dữ liệu vào memory cùng lúc.\n\nVí dụ khi đọc file 1 GB:\n- cách thông thường có thể đọc toàn bộ file vào RAM;\n- stream đọc từng chunk nhỏ rồi xử lý dần.\n\nCác loại stream phổ biến:\n- Readable;\n- Writable;\n- Duplex;\n- Transform.\n\nLợi ích:\n- giảm memory usage;\n- bắt đầu xử lý dữ liệu sớm hơn;\n- phù hợp file lớn, upload/download, proxy, compression.\n\nĐiểm cần nhớ: stream đặc biệt hữu ích khi kích thước dữ liệu lớn hoặc dữ liệu đến liên tục.",
+    "choices": [
+      "Stream xử lý dữ liệu theo từng chunk thay vì load toàn bộ vào memory.",
+      "Stream là một loại database connection pool.",
+      "Stream chỉ dùng cho WebSocket.",
+      "Stream làm mọi tác vụ CPU chạy song song."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Backpressure trong stream là gì?"
+    ]
+  },
+  {
+    "id": "node-worker-thread",
+    "category": "Node.js",
+    "difficulty": "hard",
+    "q": "Khi nào nên dùng Worker Threads trong Node.js?",
+    "a": "Worker Threads phù hợp với tác vụ CPU-heavy cần thực thi song song mà không muốn block main Event Loop.\n\nVí dụ:\n- xử lý ảnh;\n- parse dữ liệu rất lớn;\n- tính toán mã hóa;\n- thuật toán nặng CPU.\n\nKhông nên dùng Worker Threads chỉ vì một tác vụ có I/O như query DB hoặc gọi HTTP API, vì Node.js đã xử lý I/O async khá tốt.\n\nFlow:\nMain thread nhận request → giao CPU-heavy task cho worker → worker xử lý → trả kết quả về main thread.\n\nTrade-off:\n- có overhead tạo/giao tiếp worker;\n- code phức tạp hơn;\n- cần quản lý worker pool nếu tải lớn.\n\nĐiểm cần nhớ: async/await không giải quyết CPU blocking; Worker Threads mới là một cách phù hợp cho CPU-bound work.",
+    "choices": [
+      "Dùng cho CPU-heavy task để tránh block main Event Loop.",
+      "Dùng cho mọi database query.",
+      "Dùng thay thế Promise cho mọi async task.",
+      "Chỉ dùng để tạo HTTP server."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "nestjs-guard-interceptor",
+    "category": "NestJS",
+    "difficulty": "medium",
+    "q": "Guard và Interceptor trong NestJS khác nhau thế nào?",
+    "a": "Guard chủ yếu quyết định request có được phép đi tiếp hay không.\n\nVí dụ:\n- kiểm tra user đã login chưa;\n- kiểm tra role/permission.\n\nInterceptor bao quanh quá trình xử lý request/response và phù hợp cho:\n- logging;\n- transform response;\n- đo execution time;\n- caching;\n- thêm behavior trước/sau controller.\n\nFlow đơn giản:\nRequest → Guard quyết định allow/deny → Controller/Service → Interceptor có thể transform response.\n\nĐiểm cần nhớ: Guard thiên về authorization/access control, Interceptor thiên về cross-cutting behavior trước/sau handler.",
+    "choices": [
+      "Guard thường kiểm soát quyền truy cập, Interceptor xử lý cross-cutting logic trước/sau handler.",
+      "Interceptor chỉ dùng để validate DTO.",
+      "Guard chỉ dùng để format response.",
+      "Guard và Interceptor hoàn toàn giống nhau."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Pipe khác Guard như thế nào?",
+      "Middleware khác Interceptor thế nào?"
+    ]
+  },
+  {
+    "id": "nestjs-pipe",
+    "category": "NestJS",
+    "difficulty": "easy",
+    "q": "Pipe trong NestJS dùng để làm gì?",
+    "a": "Pipe thường dùng để transform hoặc validate dữ liệu đầu vào trước khi controller nhận được dữ liệu đó.\n\nVí dụ:\n- parse string \"123\" thành number;\n- validate request body theo DTO;\n- reject request nếu dữ liệu không hợp lệ.\n\nValidationPipe là ví dụ phổ biến trong NestJS.\n\nĐiểm cần nhớ:\n- Pipe làm việc gần parameter/input;\n- Guard quyết định có cho request đi tiếp hay không;\n- Interceptor bao quanh execution flow.",
+    "choices": [
+      "Pipe dùng để validate/transform input trước controller.",
+      "Pipe là load balancer.",
+      "Pipe chỉ dùng để catch exception.",
+      "Pipe thay thế database transaction."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "rest-idempotency",
+    "category": "REST API",
+    "difficulty": "medium",
+    "q": "Idempotency trong API là gì?",
+    "a": "Một operation là idempotent khi gọi cùng request nhiều lần tạo ra cùng trạng thái cuối cùng như gọi một lần.\n\nVí dụ:\nPUT /users/1 với cùng payload gọi 1 lần hay 5 lần thì trạng thái user cuối vẫn giống nhau.\n\nĐiều này rất quan trọng với retry:\n- network timeout có thể khiến client không biết request đã thành công chưa;\n- nếu endpoint không idempotent, retry có thể tạo duplicate order/payment.\n\nTrong các flow nhạy cảm như payment/order, có thể dùng idempotency key để nhận biết request bị gửi lại.\n\nĐiểm cần nhớ: GET/PUT/DELETE thường được thiết kế idempotent; POST thường không mặc định idempotent.",
+    "choices": [
+      "Gọi cùng request nhiều lần vẫn cho cùng trạng thái cuối cùng như gọi một lần.",
+      "Mọi POST request đều idempotent mặc định.",
+      "Idempotency nghĩa là API không cần authentication.",
+      "Idempotency chỉ liên quan đến cache."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Idempotency key hoạt động thế nào?"
+    ]
+  },
+  {
+    "id": "http-status",
+    "category": "REST API",
+    "difficulty": "easy",
+    "q": "400, 401, 403, 404 và 500 khác nhau thế nào?",
+    "a": "Đây là các HTTP status code thường gặp:\n\n400 Bad Request:\nRequest không hợp lệ, ví dụ thiếu field hoặc sai format.\n\n401 Unauthorized:\nClient chưa xác thực hợp lệ, ví dụ access token thiếu/hết hạn.\n\n403 Forbidden:\nĐã xác thực nhưng không có quyền thực hiện hành động.\n\n404 Not Found:\nResource không tồn tại hoặc không tìm thấy.\n\n500 Internal Server Error:\nServer gặp lỗi ngoài dự kiến.\n\nĐiểm cần nhớ: 401 và 403 rất dễ bị hỏi. 401 = chưa authenticated hợp lệ; 403 = authenticated nhưng không authorized.",
+    "choices": [
+      "401 là chưa xác thực hợp lệ, 403 là đã xác thực nhưng không có quyền.",
+      "403 luôn có nghĩa resource không tồn tại.",
+      "404 là lỗi database.",
+      "500 luôn do client gửi sai request."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "db-transaction",
+    "category": "Database",
+    "difficulty": "medium",
+    "q": "Database transaction là gì và ACID có ý nghĩa gì?",
+    "a": "Transaction gom nhiều thao tác database thành một đơn vị logic.\n\nVí dụ chuyển tiền:\n1. trừ tiền tài khoản A;\n2. cộng tiền tài khoản B.\n\nNếu bước 2 fail thì thường cần rollback bước 1 để tránh dữ liệu không nhất quán.\n\nACID:\n- Atomicity: hoặc tất cả thành công, hoặc rollback;\n- Consistency: dữ liệu giữ các invariant hợp lệ;\n- Isolation: transaction concurrent không gây ảnh hưởng sai lệch theo isolation level;\n- Durability: commit rồi thì dữ liệu phải được lưu bền vững.\n\nĐiểm cần nhớ: transaction giải quyết tính toàn vẹn dữ liệu, nhưng không tự động giải quyết mọi race condition nếu isolation/locking chưa phù hợp.",
+    "choices": [
+      "Transaction gom nhiều thao tác DB thành một đơn vị có thể commit hoặc rollback.",
+      "Transaction chỉ dùng để tăng tốc SELECT.",
+      "ACID là cơ chế cache của Redis.",
+      "Transaction đảm bảo mọi race condition biến mất."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Isolation level là gì?",
+      "Deadlock có thể xảy ra trong transaction không?"
+    ]
+  },
+  {
+    "id": "db-isolation",
+    "category": "Database",
+    "difficulty": "hard",
+    "q": "Isolation level trong database là gì?",
+    "a": "Isolation level quyết định mức độ các transaction concurrent có thể nhìn thấy thay đổi của nhau.\n\nCác level phổ biến trong SQL:\n- Read Uncommitted;\n- Read Committed;\n- Repeatable Read;\n- Serializable.\n\nLevel càng cao thường càng giảm anomaly nhưng có thể tăng contention hoặc chi phí.\n\nVí dụ:\nRead Committed thường ngăn dirty read nhưng vẫn có thể gặp non-repeatable read.\nSerializable cố gắng cho kết quả như các transaction chạy tuần tự.\n\nĐiểm cần nhớ: isolation là trade-off giữa correctness và concurrency/performance.",
+    "choices": [
+      "Isolation level kiểm soát cách các transaction concurrent nhìn thấy dữ liệu của nhau.",
+      "Isolation level là mức compression của index.",
+      "Isolation level chỉ áp dụng cho Redis.",
+      "Isolation level càng cao thì luôn nhanh hơn."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "db-deadlock",
+    "category": "Database",
+    "difficulty": "hard",
+    "q": "Deadlock trong database là gì?",
+    "a": "Deadlock xảy ra khi hai hoặc nhiều transaction giữ resource mà transaction khác cần và cùng chờ nhau vô hạn về mặt logic.\n\nVí dụ:\n- Transaction A lock row 1 rồi chờ row 2;\n- Transaction B lock row 2 rồi chờ row 1.\n\nDatabase thường phát hiện deadlock và abort một transaction.\n\nCách giảm:\n- lock resource theo thứ tự nhất quán;\n- giữ transaction ngắn;\n- tránh lock quá nhiều row;\n- retry transaction nếu gặp deadlock phù hợp.\n\nĐiểm cần nhớ: deadlock khác với lock wait bình thường. Deadlock là vòng chờ lẫn nhau.",
+    "choices": [
+      "Hai transaction giữ lock và chờ resource của nhau tạo thành vòng chờ.",
+      "Deadlock là khi query không dùng index.",
+      "Deadlock là khi Redis hết RAM.",
+      "Deadlock chỉ xảy ra ở frontend."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "db-optimistic-pessimistic",
+    "category": "Database",
+    "difficulty": "hard",
+    "q": "Optimistic locking và pessimistic locking khác nhau thế nào?",
+    "a": "Pessimistic locking giả định conflict có thể xảy ra và lock resource trước khi cập nhật.\n\nVí dụ SELECT ... FOR UPDATE để transaction khác phải chờ.\n\nOptimistic locking giả định conflict hiếm. Thay vì lock lâu, hệ thống dùng version/timestamp để kiểm tra dữ liệu có bị thay đổi kể từ lúc đọc hay không.\n\nVí dụ:\nUPDATE ... WHERE id = ? AND version = 5\nNếu affected rows = 0, có nghĩa version đã đổi và cần retry/handle conflict.\n\nTrade-off:\n- pessimistic phù hợp contention cao nhưng giảm concurrency;\n- optimistic phù hợp contention thấp nhưng cần xử lý retry khi conflict.\n\nĐiểm cần nhớ: lựa chọn phụ thuộc mức độ contention và chi phí retry.",
+    "choices": [
+      "Pessimistic lock resource trước; optimistic kiểm tra version để phát hiện conflict khi update.",
+      "Optimistic luôn giữ row lock lâu hơn pessimistic.",
+      "Hai cơ chế hoàn toàn giống nhau.",
+      "Optimistic locking chỉ dùng cho Redis."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "redis-cache-invalidation",
+    "category": "Redis",
+    "difficulty": "medium",
+    "q": "Cache invalidation là gì và tại sao khó?",
+    "a": "Cache invalidation là quá trình đảm bảo cache không trả dữ liệu cũ sau khi source of truth thay đổi.\n\nVí dụ:\n- product price trong PostgreSQL đổi từ 100 thành 120;\n- Redis vẫn cache 100;\n→ user có thể thấy stale data.\n\nCác strategy phổ biến:\n- TTL;\n- xóa cache khi write;\n- update cache khi write;\n- cache-aside.\n\nKhó ở chỗ phải giữ consistency giữa cache và database, đặc biệt khi nhiều service hoặc nhiều instance cùng cập nhật dữ liệu.\n\nĐiểm cần nhớ: cache giúp nhanh hơn nhưng đổi lại phải xử lý stale data và invalidation.",
+    "choices": [
+      "Đảm bảo cache không giữ dữ liệu cũ sau khi source of truth thay đổi.",
+      "Xóa toàn bộ database mỗi khi cache hết hạn.",
+      "Cache invalidation chỉ là đổi TTL sang 0.",
+      "Cache invalidation chỉ xảy ra trên frontend."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Cache-aside pattern là gì?"
+    ]
+  },
+  {
+    "id": "redis-ttl",
+    "category": "Redis",
+    "difficulty": "easy",
+    "q": "TTL trong Redis dùng để làm gì?",
+    "a": "TTL là Time To Live, tức thời gian một key tồn tại trước khi tự động hết hạn.\n\nVí dụ:\nOTP code sống 5 phút.\nRedis có thể lưu key với TTL 300 giây.\n\nTTL phù hợp cho:\n- cache;\n- session/temporary state;\n- OTP;\n- rate-limit window.\n\nLợi ích:\n- tự dọn dữ liệu không cần tồn tại vĩnh viễn;\n- giảm nguy cơ cache stale quá lâu.\n\nĐiểm cần nhớ: TTL không thay thế hoàn toàn cache invalidation vì trong khoảng TTL dữ liệu vẫn có thể stale.",
+    "choices": [
+      "TTL xác định thời gian key tồn tại trước khi hết hạn.",
+      "TTL là số thread Redis sử dụng.",
+      "TTL là transaction isolation level.",
+      "TTL chỉ dùng cho PostgreSQL."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "auth-cookie",
+    "category": "Authentication",
+    "difficulty": "medium",
+    "q": "HttpOnly, Secure và SameSite trong cookie có tác dụng gì?",
+    "a": "Ba thuộc tính này tăng an toàn khi dùng cookie.\n\nHttpOnly:\nJavaScript phía browser không đọc cookie qua document.cookie, giúp giảm tác động của một số XSS trong việc đánh cắp token.\n\nSecure:\nCookie chỉ được gửi qua HTTPS.\n\nSameSite:\nKiểm soát khi cookie được gửi trong cross-site request, giúp giảm rủi ro CSRF.\n\nCác giá trị SameSite thường gặp:\n- Strict;\n- Lax;\n- None (thường cần Secure).\n\nĐiểm cần nhớ: HttpOnly không ngăn mọi XSS; nếu attacker chạy được JS, họ vẫn có thể thực hiện request thay user trong một số tình huống.",
+    "choices": [
+      "HttpOnly hạn chế JS đọc cookie, Secure yêu cầu HTTPS, SameSite kiểm soát cross-site sending.",
+      "HttpOnly mã hóa JWT.",
+      "Secure làm cookie chỉ lưu trong RAM.",
+      "SameSite thay thế hoàn toàn authentication."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "auth-csrf",
+    "category": "Authentication",
+    "difficulty": "medium",
+    "q": "CSRF là gì và SameSite cookie giúp như thế nào?",
+    "a": "CSRF là khi attacker khiến browser của user đã đăng nhập gửi một request không mong muốn tới website khác, lợi dụng việc browser tự động đính kèm cookie.\n\nVí dụ user đang login bank.com, sau đó mở trang độc hại có request chuyển tiền tới bank.com.\n\nSameSite cookie có thể hạn chế cookie được gửi trong một số cross-site request, từ đó giảm khả năng CSRF.\n\nCác biện pháp khác:\n- CSRF token;\n- kiểm tra Origin/Referer trong trường hợp phù hợp;\n- không dùng cookie auth một cách thiếu kiểm soát.\n\nĐiểm cần nhớ: CSRF đặc biệt liên quan tới credential được browser tự động gửi như cookie.",
+    "choices": [
+      "CSRF lợi dụng browser tự gửi credential/cookie để tạo request ngoài ý muốn.",
+      "CSRF là database deadlock.",
+      "CSRF chỉ xảy ra khi dùng Redis.",
+      "SameSite làm browser không bao giờ gửi cookie."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "system-horizontal-vertical",
+    "category": "System Design",
+    "difficulty": "easy",
+    "q": "Horizontal scaling và vertical scaling khác nhau thế nào?",
+    "a": "Vertical scaling là tăng tài nguyên cho một máy:\n- thêm CPU;\n- thêm RAM;\n- nâng cấu hình server.\n\nHorizontal scaling là tăng số lượng instance:\nBE1, BE2, BE3...\n\nVertical scaling đơn giản hơn nhưng có giới hạn phần cứng và single point of failure.\nHorizontal scaling tăng khả năng chịu tải và availability tốt hơn nhưng làm distributed state, session, cache và consistency phức tạp hơn.\n\nĐiểm cần nhớ: khi scale horizontal, state local của từng instance thường trở thành vấn đề cần xử lý.",
+    "choices": [
+      "Vertical tăng cấu hình một máy; horizontal tăng số lượng instance.",
+      "Horizontal chỉ là tăng RAM.",
+      "Vertical luôn có availability tốt hơn horizontal.",
+      "Hai khái niệm hoàn toàn giống nhau."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "system-healthcheck",
+    "category": "System Design",
+    "difficulty": "medium",
+    "q": "Health check trong hệ thống load balanced dùng để làm gì?",
+    "a": "Health check giúp load balancer hoặc orchestration system biết instance nào có thể nhận traffic.\n\nVí dụ:\nHAProxy kiểm tra /health định kỳ.\nNếu BE2 không phản hồi hoặc trả trạng thái unhealthy, HAProxy tạm ngừng route request tới BE2.\n\nHealth check có thể chia:\n- liveness: process còn sống không;\n- readiness: instance đã sẵn sàng nhận traffic chưa.\n\nĐiểm cần nhớ: readiness quan trọng khi app đang startup, migrate hoặc chưa kết nối được dependency cần thiết.",
+    "choices": [
+      "Giúp biết instance nào healthy/sẵn sàng để nhận traffic.",
+      "Health check dùng để tạo JWT.",
+      "Health check thay thế monitoring/logging.",
+      "Health check chỉ chạy ở frontend."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "system-rate-limit",
+    "category": "System Design",
+    "difficulty": "medium",
+    "q": "Rate limiting dùng để làm gì?",
+    "a": "Rate limiting giới hạn số request một client/user/IP có thể gửi trong một khoảng thời gian.\n\nMục tiêu:\n- chống abuse;\n- giảm brute force;\n- bảo vệ backend khỏi traffic spike;\n- đảm bảo fair usage.\n\nVí dụ:\n100 requests / minute / user.\n\nRedis thường phù hợp để lưu counter/window khi hệ thống có nhiều backend instance vì các instance cần dùng chung state rate limit.\n\nĐiểm cần nhớ: rate limiting không chỉ là security feature mà còn là cơ chế bảo vệ capacity của hệ thống.",
+    "choices": [
+      "Giới hạn số request trong một khoảng thời gian để chống abuse và bảo vệ hệ thống.",
+      "Rate limiting làm database query nhanh hơn bằng index.",
+      "Rate limiting chỉ dùng cho static file.",
+      "Rate limiting thay thế authentication."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "production-log-correlation",
+    "category": "Production",
+    "difficulty": "medium",
+    "q": "Correlation ID / Request ID giúp debug production như thế nào?",
+    "a": "Correlation ID là một identifier gắn với một request và được truyền qua các layer/service liên quan.\n\nVí dụ:\nClient request → API Gateway → Backend → Payment Service\n\nNếu tất cả log đều chứa request_id = abc123, bạn có thể search abc123 để ghép toàn bộ flow lại.\n\nLợi ích:\n- dễ trace một request qua nhiều service;\n- phân biệt log của nhiều request concurrent;\n- hỗ trợ debug timeout hoặc partial failure.\n\nĐiểm cần nhớ: correlation ID đặc biệt hữu ích trong distributed system nơi một user action tạo nhiều downstream calls.",
+    "choices": [
+      "Gắn cùng một ID vào log của một request qua nhiều layer/service để trace dễ hơn.",
+      "Là ID của database primary key.",
+      "Chỉ dùng để cache response.",
+      "Thay thế hoàn toàn distributed tracing."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "production-timeout-retry",
+    "category": "Production",
+    "difficulty": "hard",
+    "q": "Timeout, retry và circuit breaker khác nhau thế nào?",
+    "a": "Ba cơ chế giải quyết các vấn đề khác nhau khi gọi dependency.\n\nTimeout:\nKhông chờ dependency quá lâu.\n\nRetry:\nThử lại khi lỗi có khả năng tạm thời.\n\nCircuit breaker:\nNếu dependency lỗi liên tục, tạm ngừng gửi request trong một khoảng thời gian để tránh làm hệ thống tệ hơn.\n\nVí dụ payment API đang down:\n- timeout tránh mỗi request treo 30 giây;\n- retry có thể cứu lỗi transient;\n- circuit breaker tránh hàng nghìn request tiếp tục đập vào service đang chết.\n\nĐiểm cần nhớ: retry không kiểm soát có thể tạo retry storm. Thường cần backoff, jitter và giới hạn số lần retry.",
+    "choices": [
+      "Timeout giới hạn thời gian chờ, retry thử lại lỗi tạm thời, circuit breaker tạm ngừng gọi dependency đang lỗi liên tục.",
+      "Cả ba chỉ là ba tên của cùng một cơ chế.",
+      "Circuit breaker dùng để mã hóa token.",
+      "Retry nên luôn vô hạn."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "post-zalo-bug",
+    "category": "PostGifty",
+    "difficulty": "hard",
+    "q": "Bug Zalo chatbot multi-instance xảy ra vì sao dù HAProxy đã có sticky session?",
+    "a": "Vấn đề nằm ở flow request chứ không chỉ ở routing của browser.\n\nBrowser request ban đầu có thể:\nBrowser → HAProxy → BE1\n\nNhưng Zalo trả webhook về n8n, sau đó n8n tạo một request mới tới backend:\nZalo → n8n → HAProxy → BE1 hoặc BE2\n\nRequest mới này không nhất thiết mang cùng sticky-session context với browser.\n\nNếu BE1 và BE2 dùng Redis local riêng:\n- state được ghi ở Redis của BE1;\n- webhook rơi vào BE2;\n- BE2 không thấy state;\n→ lỗi xảy ra lúc được lúc không.\n\nDev/staging chỉ có một instance/Redis path nên không tái hiện.\n\nĐiểm cần nhớ: sticky session không giải quyết shared state cho webhook hoặc request độc lập. Shared Redis là cách phù hợp hơn trong flow này.",
+    "choices": [
+      "Webhook từ n8n là request mới có thể vào instance khác trong khi state nằm ở Redis local riêng.",
+      "Sticky session tự đồng bộ Redis nhưng Zalo không hỗ trợ JSON.",
+      "HAProxy không hỗ trợ round-robin.",
+      "Redis không thể chạy trên production."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Ngoài shared Redis còn giải pháp nào?",
+      "Trade-off của sticky session so với stateless/shared state?"
+    ]
+  },
+  {
+    "id": "post-double-check-lock",
+    "category": "PostGifty",
+    "difficulty": "hard",
+    "q": "Tại sao sau khi lấy lock vẫn phải double-check điều kiện?",
+    "a": "Check trước lock chỉ phản ánh state tại thời điểm đó.\n\nVí dụ:\nA check: voucher còn slot.\nB check: voucher còn slot.\nA lấy lock trước và claim slot.\nB chờ lock.\n\nKhi B cuối cùng lấy được lock, kết quả check ban đầu của B đã stale. Nếu B không check lại, nó vẫn có thể claim dù slot đã hết.\n\nVì vậy pattern đúng là:\ncheck → acquire lock → re-check → update.\n\nĐiểm cần nhớ: lock bảo vệ critical section, nhưng dữ liệu đọc trước khi vào critical section có thể đã thay đổi.",
+    "choices": [
+      "Vì state có thể thay đổi trong lúc request đang chờ lock.",
+      "Vì lock tự xóa dữ liệu trước đó.",
+      "Double-check chỉ để tăng tốc.",
+      "Không cần double-check nếu có transaction."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "rag-similarity",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Cosine similarity trong RAG dùng để làm gì?",
+    "a": "Cosine similarity đo mức độ hai vector có hướng giống nhau đến đâu.\n\nTrong embedding space, hai câu có semantic meaning gần nhau thường có vector gần nhau về hướng.\n\nVí dụ:\n“cách hoàn tiền”\nvà\n“refund policy”\ncó thể có cosine similarity cao dù từ ngữ khác nhau.\n\nTrong workflow, pgvector dùng distance/similarity để xếp hạng các chunk gần query vector.\n\nĐiểm cần nhớ: vector search là semantic search, không chỉ là match keyword chính xác.",
+    "choices": [
+      "Đo mức độ tương đồng về hướng giữa các embedding vector để xếp hạng chunk.",
+      "Đếm số từ giống nhau giữa hai câu.",
+      "Tính tổng token của prompt.",
+      "Đo latency của database."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Cosine similarity khác Euclidean distance thế nào?"
+    ]
+  },
+  {
+    "id": "rag-topk",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Top K trong vector retrieval ảnh hưởng RAG như thế nào?",
+    "a": "Top K là số lượng chunk được lấy sau similarity search.\n\nK nhỏ:\n- ít noise;\n- ít token/cost;\n- nhưng có thể bỏ sót context.\n\nK lớn:\n- tăng recall;\n- nhưng dễ đưa thêm chunk không liên quan;\n- prompt dài hơn và tốn token hơn.\n\nWorkflow hiện tại dùng topK = 5.\n\nĐiểm cần nhớ: không có một K tối ưu cho mọi use case. Cần tune dựa trên retrieval quality, document type và context window.",
+    "choices": [
+      "Top K là số chunk retrieval trả về; quá nhỏ có thể thiếu context, quá lớn có thể tăng noise/token.",
+      "Top K là số dimension của embedding.",
+      "Top K là số user được phép login.",
+      "Top K luôn phải bằng 1."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "rag-hallucination",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "RAG có loại bỏ hoàn toàn hallucination không?",
+    "a": "Không. RAG giúp giảm hallucination bằng cách cung cấp context có nguồn, nhưng không đảm bảo LLM luôn trả lời đúng.\n\nCác nguyên nhân vẫn có thể sai:\n- retrieval lấy nhầm chunk;\n- tài liệu nguồn sai hoặc cũ;\n- chunk thiếu context;\n- prompt không buộc model bám nguồn;\n- model suy diễn quá mức.\n\nCách giảm:\n- cải thiện chunking/retrieval;\n- metadata filtering;\n- reranking;\n- yêu cầu trả lời “không tìm thấy” khi thiếu evidence;\n- citation/source display.\n\nĐiểm cần nhớ: RAG cải thiện grounding, không biến LLM thành hệ thống deterministic tuyệt đối.",
+    "choices": [
+      "Không; RAG giảm hallucination nhưng vẫn có thể sai do retrieval hoặc generation.",
+      "Có; chỉ cần dùng vector DB thì câu trả lời luôn đúng.",
+      "Có; RAG không dùng LLM.",
+      "Không; vì embedding không thể tìm semantic similarity."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "rag-finetune",
+    "category": "RAG",
+    "difficulty": "hard",
+    "q": "RAG khác fine-tuning như thế nào?",
+    "a": "RAG đưa kiến thức vào runtime context bằng retrieval, còn fine-tuning thay đổi trọng số/model behavior thông qua training thêm.\n\nRAG phù hợp khi:\n- kiến thức thay đổi thường xuyên;\n- cần cite nguồn;\n- cần cập nhật tài liệu mà không train lại model.\n\nFine-tuning phù hợp hơn khi:\n- muốn thay style/format/behavior;\n- cần model học pattern task cụ thể;\n- không phải chủ yếu để “nhét” knowledge base thường xuyên thay đổi.\n\nHai kỹ thuật có thể kết hợp.\n\nĐiểm cần nhớ: nếu câu hỏi là “làm sao để model biết tài liệu nội bộ mới cập nhật hôm nay?”, RAG thường hợp lý hơn fine-tuning.",
+    "choices": [
+      "RAG retrieve knowledge lúc runtime; fine-tuning thay đổi model qua training thêm.",
+      "RAG và fine-tuning hoàn toàn giống nhau.",
+      "Fine-tuning luôn phù hợp hơn cho tài liệu thay đổi hàng ngày.",
+      "RAG thay đổi trọng số model sau mỗi query."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "frontend-state",
+    "category": "Frontend",
+    "difficulty": "medium",
+    "q": "Server state và client state khác nhau thế nào?",
+    "a": "Client state là state chỉ liên quan UI/browser, ví dụ:\n- modal đang mở;\n- selected tab;\n- theme.\n\nServer state là dữ liệu nguồn nằm trên server:\n- user profile;\n- orders;\n- products.\n\nServer state có thêm vấn đề:\n- fetching;\n- caching;\n- stale data;\n- refetch;\n- synchronization.\n\nVì vậy các tool như React Query/TanStack Query tập trung vào server state hơn là thay thế toàn bộ local state.\n\nĐiểm cần nhớ: phân biệt hai loại state giúp chọn công cụ quản lý state hợp lý.",
+    "choices": [
+      "Client state chủ yếu thuộc UI local; server state đến từ backend và cần fetch/cache/sync.",
+      "Server state chỉ tồn tại trong localStorage.",
+      "Client state luôn phải lưu trong PostgreSQL.",
+      "Hai loại state không có khác biệt."
+    ],
+    "correctIndex": 0
   }
 ];
