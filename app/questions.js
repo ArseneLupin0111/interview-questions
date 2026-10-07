@@ -1382,5 +1382,91 @@ window.INTERVIEW_QUESTIONS = [
       "Cache invalidation là gì?",
       "Browser cache và Redis cache khác nhau thế nào?"
     ]
+  },
+  {
+    "id": "db-connection-pool",
+    "category": "Database",
+    "difficulty": "medium",
+    "q": "Database connection pool là gì và tại sao backend cần nó?",
+    "a": "Connection pool giữ sẵn một số kết nối database để nhiều request tái sử dụng thay vì mở kết nối mới mỗi lần. Nó giảm overhead, nhưng pool quá lớn có thể làm PostgreSQL quá tải. Khi scale nhiều backend instance phải tính tổng số connection của tất cả instance.",
+    "choices": [
+      "Tập các kết nối database được tái sử dụng giữa nhiều request.",
+      "Một cache chứa toàn bộ table trong RAM.",
+      "Cơ chế tạo database mới cho mỗi request.",
+      "Một loại index của PostgreSQL."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Khi scale nhiều backend instance thì connection pool cần lưu ý gì?"
+    ]
+  },
+  {
+    "id": "node-graceful-shutdown",
+    "category": "Node.js",
+    "difficulty": "medium",
+    "q": "Graceful shutdown trong Node.js backend là gì?",
+    "a": "Khi process nhận tín hiệu dừng, backend ngừng nhận request mới, chờ request đang xử lý hoàn tất, đóng database/Redis connection và các resource khác rồi mới thoát. Điều này giúp deploy hoặc restart giảm request bị lỗi giữa chừng.",
+    "choices": [
+      "Ngừng nhận việc mới, hoàn tất việc đang chạy và đóng resource trước khi process thoát.",
+      "Kill process ngay lập tức để giải phóng RAM nhanh nhất.",
+      "Restart database trước khi dừng backend.",
+      "Chỉ xóa cache rồi tiếp tục chạy."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Nếu chạy sau load balancer thì nên remove instance khỏi traffic lúc nào?"
+    ]
+  },
+  {
+    "id": "docker-healthcheck",
+    "category": "Production",
+    "difficulty": "medium",
+    "q": "Docker healthcheck khác việc container đang running như thế nào?",
+    "a": "Container running chỉ cho biết process/container chưa dừng. Healthcheck kiểm tra ứng dụng có thực sự hoạt động đúng hay không, ví dụ gọi endpoint /health. Process vẫn có thể chạy nhưng app bị kẹt hoặc không phục vụ request được.",
+    "choices": [
+      "Running nói container chưa dừng; healthcheck kiểm tra app có thực sự sẵn sàng/hoạt động hay không.",
+      "Hai khái niệm luôn giống nhau.",
+      "Healthcheck chỉ kiểm tra dung lượng disk.",
+      "Container chỉ running khi database healthy."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Healthcheck nên kiểm tra những dependency nào?"
+    ]
+  },
+  {
+    "id": "system-load-balancer-health",
+    "category": "System Design",
+    "difficulty": "medium",
+    "q": "Load balancer như Nginx/HAProxy biết backend instance nào nên nhận request bằng cách nào?",
+    "a": "Load balancer có thể dùng health check để xác định backend nào còn healthy và chỉ route traffic tới các instance phù hợp. Khi một instance lỗi hoặc đang deploy, nó có thể được loại khỏi pool để request đi sang instance khác.",
+    "choices": [
+      "Dùng health check và loại instance unhealthy khỏi pool nhận traffic.",
+      "Luôn gửi request ngẫu nhiên kể cả backend đã chết.",
+      "Query trực tiếp database để chọn user.",
+      "DNS tạo một backend mới cho mỗi request."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Round-robin khác least-connections thế nào?",
+      "Điều gì xảy ra khi một instance bị restart?"
+    ]
+  },
+  {
+    "id": "react-memoization",
+    "category": "Frontend",
+    "difficulty": "medium",
+    "q": "Khi nào nên dùng React.memo, useMemo hoặc useCallback?",
+    "a": "Chỉ nên dùng khi có vấn đề render hoặc tính toán đáng kể và memoization thực sự giúp giảm công việc. React.memo memo component theo props, useMemo giữ kết quả tính toán, còn useCallback giữ reference của function. Không nên thêm chúng vào mọi nơi vì bản thân memoization cũng có chi phí.",
+    "choices": [
+      "Dùng có chọn lọc khi cần giảm render/tính toán; không phải mặc định cho mọi component.",
+      "Luôn dùng cả ba trong mọi component React.",
+      "Chúng dùng để gọi API thay fetch.",
+      "Chúng đảm bảo state không bao giờ thay đổi."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "useMemo và useCallback khác nhau thế nào?"
+    ]
   }
 ];
