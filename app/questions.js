@@ -1318,5 +1318,69 @@ window.INTERVIEW_QUESTIONS = [
     "follow": [
       "Làm sao giảm thiệt hại nếu backend bị compromise?"
     ]
+  },
+  {
+    "id": "system-browser-url-flow",
+    "category": "System Design",
+    "difficulty": "medium",
+    "q": "Khi user nhập một URL vào trình duyệt thì flow hoạt động thế nào?",
+    "a": "Browser kiểm tra cache trước. Nếu cần, browser dùng DNS để tìm IP của domain rồi kết nối tới server. Nếu là HTTPS thì thực hiện TLS handshake. Request sau đó có thể đi qua reverse proxy như Nginx tới application. Application xử lý và trả response để browser render trang.",
+    "choices": [
+      "Cache → DNS → kết nối server → TLS nếu HTTPS → reverse proxy → application → response.",
+      "Browser gửi request thẳng tới database rồi database render HTML.",
+      "DNS xử lý toàn bộ business logic rồi trả trang web.",
+      "TLS chỉ chạy sau khi browser đã render xong trang."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Cache có thể xuất hiện ở những đâu trong flow này?",
+      "Nginx đóng vai trò gì?"
+    ]
+  },
+  {
+    "id": "system-http-vs-https",
+    "category": "System Design",
+    "difficulty": "easy",
+    "q": "HTTP khác HTTPS như thế nào?",
+    "a": "HTTP truyền dữ liệu không được mã hóa. HTTPS là HTTP chạy trên TLS nên dữ liệu giữa client và server được mã hóa, đồng thời client có thể xác minh server thông qua certificate.",
+    "choices": [
+      "HTTPS là HTTP chạy trên TLS nên dữ liệu được mã hóa.",
+      "HTTPS chỉ khác HTTP ở port, không có mã hóa.",
+      "HTTP an toàn hơn vì không cần certificate.",
+      "HTTPS chỉ dùng cho frontend, không dùng cho API."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "system-tls",
+    "category": "System Design",
+    "difficulty": "easy",
+    "q": "TLS là gì?",
+    "a": "TLS là giao thức bảo mật dùng để mã hóa kết nối giữa client và server. Nó giúp bảo vệ dữ liệu trên đường truyền, kiểm tra dữ liệu không bị thay đổi và xác minh server thông qua certificate.",
+    "choices": [
+      "Giao thức bảo mật dùng để mã hóa và bảo vệ kết nối giữa client và server.",
+      "Một loại database dùng để lưu session.",
+      "Một giao thức thay thế DNS.",
+      "Một cơ chế load balancing."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "system-web-cache-flow",
+    "category": "System Design",
+    "difficulty": "medium",
+    "q": "Cache nằm ở đâu trong flow truy cập một website?",
+    "a": "Cache có thể nằm ở nhiều lớp như DNS cache, browser cache, CDN hoặc reverse proxy cache, và backend cache như Redis. Nếu dữ liệu còn hợp lệ thì hệ thống dùng cache; nếu không thì request mới đi tiếp xuống server hoặc database.",
+    "choices": [
+      "Có thể ở DNS, browser, CDN/reverse proxy và backend như Redis.",
+      "Chỉ tồn tại trong database.",
+      "Chỉ tồn tại trong browser.",
+      "Cache chỉ dùng cho password và token."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Cache invalidation là gì?",
+      "Browser cache và Redis cache khác nhau thế nào?"
+    ]
   }
 ];
