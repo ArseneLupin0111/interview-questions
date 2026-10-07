@@ -1468,5 +1468,90 @@ window.INTERVIEW_QUESTIONS = [
     "follow": [
       "useMemo và useCallback khác nhau thế nào?"
     ]
+  },
+  {
+    "id": "web-cors",
+    "category": "REST API",
+    "difficulty": "medium",
+    "q": "CORS là gì và tại sao browser có thể chặn request dù backend vẫn chạy?",
+    "a": "CORS là cơ chế của browser kiểm soát request khác origin. Backend phải trả các header phù hợp cho origin được phép; nếu không, browser có thể chặn frontend đọc response dù server đã nhận request.",
+    "choices": [
+      "Cơ chế browser kiểm soát cross-origin request dựa trên response header.",
+      "Một cơ chế mã hóa thay TLS.",
+      "Một loại reverse proxy.",
+      "Một cách PostgreSQL giới hạn connection."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Preflight OPTIONS xảy ra khi nào?"
+    ]
+  },
+  {
+    "id": "docker-multistage-build",
+    "category": "Production",
+    "difficulty": "medium",
+    "q": "Tại sao nên dùng multi-stage build cho Docker image?",
+    "a": "Multi-stage build tách bước build khỏi image chạy production. Image cuối chỉ copy artifact và dependency cần thiết nên thường nhỏ hơn, ít tool dư thừa hơn và giảm bề mặt tấn công.",
+    "choices": [
+      "Tách build và runtime để image cuối gọn hơn.",
+      "Để một container chạy nhiều OS cùng lúc.",
+      "Để thay Docker volume.",
+      "Để tự động scale container."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Tại sao image nhỏ hơn có lợi khi deploy?"
+    ]
+  },
+  {
+    "id": "docker-volume-persistence",
+    "category": "Production",
+    "difficulty": "easy",
+    "q": "Docker volume giải quyết vấn đề gì?",
+    "a": "Filesystem bên trong container có thể mất khi container bị thay thế. Volume lưu dữ liệu ngoài lifecycle của container, nên phù hợp cho dữ liệu cần tồn tại như database data hoặc file persistent.",
+    "choices": [
+      "Giữ dữ liệu cần tồn tại độc lập với lifecycle container.",
+      "Tăng CPU cho container.",
+      "Thay thế reverse proxy.",
+      "Mã hóa network traffic."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Bind mount khác named volume thế nào?"
+    ]
+  },
+  {
+    "id": "redis-eviction-policy",
+    "category": "Redis",
+    "difficulty": "medium",
+    "q": "Điều gì xảy ra khi Redis đạt giới hạn memory?",
+    "a": "Tùy maxmemory-policy, Redis có thể từ chối write hoặc loại bỏ key theo policy như LRU/LFU. Vì vậy cần chọn eviction policy phù hợp với loại dữ liệu.",
+    "choices": [
+      "Redis xử lý theo maxmemory-policy: có thể eviction key hoặc từ chối write.",
+      "Redis tự chuyển toàn bộ dữ liệu sang PostgreSQL.",
+      "Redis luôn xóa database ngay lập tức.",
+      "Redis tự tăng RAM của VPS."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Cache và session có nên dùng cùng eviction policy không?"
+    ]
+  },
+  {
+    "id": "system-zero-downtime-deploy",
+    "category": "System Design",
+    "difficulty": "hard",
+    "q": "Làm thế nào deploy nhiều backend instance mà giảm downtime?",
+    "a": "Đưa instance mới lên, đợi health check pass rồi mới nhận traffic; sau đó remove instance cũ khỏi load balancer, chờ request đang chạy hoàn tất và shutdown. Rollout từng instance để luôn còn backend healthy.",
+    "choices": [
+      "Rollout từng instance, chỉ route vào instance healthy và graceful shutdown instance cũ.",
+      "Dừng toàn bộ backend rồi build production.",
+      "Restart database trước mỗi deploy.",
+      "Cho load balancer gửi traffic vào instance ngay khi process vừa start."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Readiness check khác liveness check thế nào?"
+    ]
   }
 ];
