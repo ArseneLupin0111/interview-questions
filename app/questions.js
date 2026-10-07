@@ -1137,5 +1137,186 @@ window.INTERVIEW_QUESTIONS = [
     "follow": [
       "Agent được phép thực hiện những Docker action nào?"
     ]
+  },
+  {
+    "id": "flex-sec-host-key",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "SSH host key trong FlexServer dùng để làm gì?",
+    "a": "SSH host key dùng để xác nhận backend đang kết nối đúng VPS.\n\nKhi kết nối SSH, backend kiểm tra host key của VPS với key đã tin cậy trước đó. Nếu không khớp thì không tiếp tục kết nối.\n\nMục tiêu là tránh trường hợp backend kết nối nhầm hoặc bị chuyển hướng sang một server giả.",
+    "choices": [
+      "Xác nhận backend đang kết nối đúng VPS.",
+      "Dùng để mã hóa password trong database.",
+      "Dùng để tạo agent token.",
+      "Dùng để lưu metrics."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "SSH host key khác SSH key dùng để đăng nhập thế nào?"
+    ]
+  },
+  {
+    "id": "flex-sec-provision-password",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Password SSH khi provision key có rủi ro gì và FlexServer xử lý thế nào?",
+    "a": "Password phải đi từ frontend tới backend nên có rủi ro bị lộ nếu đường truyền hoặc logging không an toàn.\n\nFlexServer chỉ dùng password tạm thời để kết nối SSH và cài public key. Password không được lưu vào database, localStorage, log hoặc API response.\n\nKhi triển khai thật cần dùng HTTPS.",
+    "choices": [
+      "Chỉ dùng tạm thời để provision key và không lưu lại.",
+      "Lưu plaintext để dùng cho mọi lần SSH.",
+      "Gửi password cho Go agent lưu lâu dài.",
+      "Đưa password vào URL để backend dễ đọc."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-sec-agent-token",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Tại sao backend không lưu raw agent token?",
+    "a": "Nếu database bị lộ mà raw token được lưu trực tiếp thì attacker có thể dùng token đó để giả agent.\n\nFlexServer chỉ lưu hash của phần secret. Khi agent gửi request, backend hash secret nhận được rồi so sánh với giá trị đã lưu.\n\nRaw token chỉ được tạo và trả ra một lần.",
+    "choices": [
+      "Để database bị lộ cũng không trực tiếp làm lộ raw token dùng để xác thực agent.",
+      "Vì raw token không thể lưu trong PostgreSQL.",
+      "Vì agent không cần token sau lần đầu.",
+      "Vì frontend tự tạo lại token mỗi request."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Token bị lộ trên VPS thì xử lý thế nào?"
+    ]
+  },
+  {
+    "id": "flex-sec-vpsid-token",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Tại sao backend xác định VPS từ agent token thay vì tin vpsId trong payload?",
+    "a": "Nếu backend tin vpsId do agent gửi lên thì một agent có thể sửa payload để giả dữ liệu của VPS khác.\n\nTrong FlexServer, credential đã gắn với một VPS. Backend xác định VPS từ token đã xác thực thay vì tin vào vpsId do client tự khai báo.",
+    "choices": [
+      "Để agent không thể đổi vpsId trong payload rồi giả dữ liệu của VPS khác.",
+      "Để giảm kích thước CPU usage.",
+      "Vì PostgreSQL không lưu được vpsId.",
+      "Vì SSE không hỗ trợ vpsId."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-sec-session-cookie",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Session cookie của dashboard được bảo vệ như thế nào?",
+    "a": "Sau khi login, backend tạo session token và lưu hash của token ở server.\n\nBrowser nhận token qua cookie có HttpOnly. Khi cấu hình HTTPS, cookie dùng Secure và hệ thống cũng cấu hình SameSite.\n\nLogout sẽ revoke session và xóa cookie.",
+    "choices": [
+      "Token được lưu trong HttpOnly cookie và backend chỉ lưu hash của session token.",
+      "Session token luôn lưu trong localStorage.",
+      "Backend trả private key qua cookie.",
+      "Cookie không có thời gian hết hạn."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "HttpOnly giúp bảo vệ điều gì?",
+      "Secure và SameSite có tác dụng gì?"
+    ]
+  },
+  {
+    "id": "flex-sec-origin",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "FlexServer kiểm tra Origin để làm gì?",
+    "a": "Dashboard dùng cookie để xác thực, nên browser có thể tự gửi cookie kèm request.\n\nVới các request thay đổi dữ liệu như POST, PATCH hoặc DELETE, backend kiểm tra Origin để đảm bảo request đến từ dashboard được cho phép.\n\nNếu Origin không hợp lệ thì request bị từ chối.",
+    "choices": [
+      "Giảm nguy cơ một website khác lợi dụng browser của user để gửi request thay đổi dữ liệu.",
+      "Kiểm tra CPU của VPS.",
+      "Xác minh agent token.",
+      "Thay thế HTTPS."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-sec-terminal",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "FlexServer bảo vệ WebSocket remote terminal như thế nào?",
+    "a": "Trước khi mở terminal, backend kiểm tra mode, Origin và session của dashboard.\n\nWebSocket cũng giới hạn kích thước message và terminal có timeout. Sau khi được phép, backend mới mở SSH session tới VPS.\n\nSSH key không được gửi xuống frontend.",
+    "choices": [
+      "Kiểm tra session và Origin, giới hạn kết nối/message rồi mới mở SSH session.",
+      "Frontend nhận private key và SSH trực tiếp tới VPS.",
+      "Bất kỳ WebSocket nào cũng được mở terminal.",
+      "Terminal không cần authentication nếu biết VPS id."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-sec-ssh-target",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Tại sao FlexServer chặn một số địa chỉ SSH như localhost hoặc metadata address?",
+    "a": "Nếu user có thể yêu cầu backend SSH tới bất kỳ địa chỉ nào thì backend có thể bị lợi dụng để truy cập các máy hoặc dịch vụ nội bộ mà user không nên truy cập.\n\nVì vậy FlexServer có host policy chặn localhost, metadata/link-local và mặc định chặn private-network target nếu chưa được cho phép.",
+    "choices": [
+      "Để tránh backend bị lợi dụng làm điểm truy cập tới các địa chỉ nội bộ hoặc nhạy cảm.",
+      "Vì ssh2 không hỗ trợ localhost.",
+      "Vì agent chỉ chạy trên public IP.",
+      "Để SSE hoạt động nhanh hơn."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-sec-docker-access",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Tại sao quyền truy cập Docker socket được tắt mặc định?",
+    "a": "Process có quyền truy cập Docker socket có thể tạo container với quyền rất cao và truy cập tài nguyên của host.\n\nVì vậy FlexServer không cấp quyền Docker cho agent mặc định. Chỉ khi user chủ động bật Docker metrics thì agent mới được cấp thêm quyền cần thiết.",
+    "choices": [
+      "Vì Docker socket có quyền rất lớn trên host nên chỉ cấp khi thực sự cần.",
+      "Vì Docker socket không hoạt động trên Linux.",
+      "Vì PostgreSQL cần chiếm Docker socket.",
+      "Vì agent token thay thế Docker socket."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-sec-rate-limit",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Rate limiting trong FlexServer bảo vệ những endpoint nào quan trọng?",
+    "a": "FlexServer giới hạn các request thay đổi dữ liệu và login theo IP.\n\nMục tiêu là giảm brute-force login và tránh một client gửi quá nhiều request nhạy cảm trong thời gian ngắn.\n\nAgent metric ingestion có giới hạn riêng vì nó gửi dữ liệu thường xuyên hơn.",
+    "choices": [
+      "Login và các mutation nhạy cảm được rate limit để giảm brute force và abuse.",
+      "Chỉ file CSS bị rate limit.",
+      "Rate limit dùng để mã hóa token.",
+      "Rate limit thay thế authentication."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-sec-secret-logging",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "FlexServer tránh làm lộ secret qua log như thế nào?",
+    "a": "Các dữ liệu nhạy cảm như password và agent token không được ghi trực tiếp vào log.\n\nAgent cũng che token khi hiển thị config hoặc xử lý error response.\n\nMục tiêu là tránh secret bị lộ qua log, audit hoặc thông báo lỗi.",
+    "choices": [
+      "Không log password/raw token và che các giá trị nhạy cảm trong error/log output.",
+      "Log toàn bộ token để debug dễ hơn.",
+      "Gửi token vào audit log rồi mã hóa sau.",
+      "Chỉ bảo vệ secret ở frontend."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-sec-backend-compromise",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Nếu backend FlexServer bị compromise thì agent architecture có bảo vệ VPS hoàn toàn không?",
+    "a": "Không. Backend vẫn có khả năng gửi các yêu cầu quản lý tới VPS và trong một số flow còn có SSH key.\n\nViệc dùng agent và giới hạn Docker operation giúp giảm phạm vi quyền của từng chức năng, nhưng không thể bảo vệ hoàn toàn nếu backend đã bị chiếm quyền.\n\nVì vậy vẫn phải bảo vệ backend, SSH key và agent credential.",
+    "choices": [
+      "Không; agent giúp giới hạn một số quyền nhưng backend bị chiếm vẫn là rủi ro lớn.",
+      "Có; agent khiến backend không thể ảnh hưởng VPS nữa.",
+      "Có; chỉ cần hash token là đủ.",
+      "Không; vì agent không có authentication."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Làm sao giảm thiệt hại nếu backend bị compromise?"
+    ]
   }
 ];
