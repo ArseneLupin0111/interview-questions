@@ -170,3 +170,8 @@ button.ghost { background: var(--surface); color: var(--text); }
 @media (max-width: 760px) {
   .header-actions { margin-top: 8px; flex-wrap: wrap; }
 }
+
+#answerText {
+  white-space: pre-line;
+  line-height: 1.8;
+}
