@@ -889,5 +889,253 @@ window.INTERVIEW_QUESTIONS = [
       "Hai loại state không có khác biệt."
     ],
     "correctIndex": 0
+  },
+  {
+    "id": "flex-architecture",
+    "category": "FlexServer",
+    "difficulty": "easy",
+    "q": "FlexServer có kiến trúc như thế nào?",
+    "a": "FlexServer gồm React/Vite ở frontend, NestJS ở backend và một Go agent chạy trên VPS.\n\nGo agent lấy CPU, RAM, disk, network và uptime rồi gửi về backend. Backend lưu và xử lý dữ liệu, còn frontend hiển thị dashboard và nhận cập nhật realtime.\n\nNgoài monitoring, hệ thống còn có SSH key, agent installation, Docker management, audit log và web terminal.",
+    "choices": [
+      "React/Vite frontend, NestJS backend và Go agent chạy trên VPS.",
+      "Chỉ có một ứng dụng React chạy trực tiếp trên VPS.",
+      "Go là backend chính và NestJS chỉ dùng cho frontend.",
+      "Hệ thống không có agent trên VPS."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Go agent có nhiệm vụ gì?",
+      "Backend và agent giao tiếp như thế nào?"
+    ]
+  },
+  {
+    "id": "flex-why-nestjs",
+    "category": "FlexServer",
+    "difficulty": "easy",
+    "q": "Tại sao FlexServer dùng NestJS cho backend?",
+    "a": "Backend FlexServer xử lý nhiều phần như VPS, agent, metrics, jobs, SSH và authentication.\n\nNestJS giúp chia code thành controller và service rõ ràng, nên dễ quản lý khi project có nhiều chức năng.\n\nNgoài ra Dependency Injection giúp các service và repository dễ thay thế và test hơn.",
+    "choices": [
+      "Vì NestJS giúp chia backend thành các phần rõ ràng và dễ quản lý.",
+      "Vì NestJS bắt buộc phải dùng khi có PostgreSQL.",
+      "Vì NestJS chạy được trực tiếp trên mọi VPS mà không cần Node.js.",
+      "Vì NestJS thay thế hoàn toàn React."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-why-go-agent",
+    "category": "FlexServer",
+    "difficulty": "easy",
+    "q": "Tại sao FlexServer dùng Go cho agent?",
+    "a": "Agent phải chạy trực tiếp trên VPS và lấy thông tin hệ thống liên tục.\n\nGo có thể build thành một file chạy độc lập trên Linux, nên khi cài lên VPS không cần cài thêm Node.js và nhiều thư viện đi kèm.\n\nĐiều này giúp việc cài đặt và chạy agent gọn hơn.",
+    "choices": [
+      "Go có thể build thành một binary độc lập, phù hợp để chạy trực tiếp trên VPS.",
+      "Vì Node.js không thể gửi HTTP request.",
+      "Vì NestJS chỉ giao tiếp được với Go.",
+      "Vì Go bắt buộc khi đọc CPU và RAM."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Tại sao không viết agent bằng Node.js?"
+    ]
+  },
+  {
+    "id": "flex-node-agent",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Tại sao không viết luôn agent bằng Node.js?",
+    "a": "Node.js vẫn có thể viết agent.\n\nFlexServer chọn Go vì agent được cài trực tiếp lên VPS. Go có thể build thành một file chạy độc lập nên VPS không cần cài Node.js hoặc các dependency của project.\n\nNếu agent đơn giản và môi trường đã có Node.js thì dùng Node.js cũng là một lựa chọn hợp lý.",
+    "choices": [
+      "Go giúp deploy agent thành một file độc lập và giảm yêu cầu cài runtime trên VPS.",
+      "Node.js không chạy được trên Linux.",
+      "Node.js không đọc được file hệ thống.",
+      "Backend NestJS không thể giao tiếp với agent Node.js."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-add-vps",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Khi thêm một VPS mới trong FlexServer, flow cơ bản là gì?",
+    "a": "Frontend gửi thông tin VPS như host, port, username và tên server lên backend.\n\nBackend validate dữ liệu, lưu VPS và ghi audit event.\n\nSau đó user có thể thiết lập SSH key. Khi SSH đã sẵn sàng, hệ thống có thể cài Go agent để bắt đầu gửi metrics về dashboard.",
+    "choices": [
+      "Lưu thông tin VPS, thiết lập SSH khi cần, sau đó có thể cài agent để gửi metrics.",
+      "Backend tự biết password của VPS mà user không cần cung cấp.",
+      "Frontend kết nối trực tiếp PostgreSQL trên VPS.",
+      "VPS chỉ được thêm sau khi Go agent đã chạy."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Password VPS có được lưu không?",
+      "SSH key được cài như thế nào?"
+    ]
+  },
+  {
+    "id": "flex-ssh-password",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Password SSH được sử dụng và bảo vệ như thế nào khi thiết lập VPS?",
+    "a": "Password không được lưu khi thêm VPS.\n\nNếu VPS chưa có SSH key, user có thể gửi password một lần để backend kết nối SSH và cài public key lên VPS.\n\nSau đó backend ưu tiên dùng SSH key. Password không được lưu vào database hoặc trả lại trong API response.",
+    "choices": [
+      "Password chỉ dùng tạm thời để thiết lập SSH key và không được lưu.",
+      "Password được lưu plaintext để dùng cho mọi lần SSH sau.",
+      "Password được gửi cho Go agent và lưu trong config.",
+      "Password luôn được lưu trong localStorage."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Việc gửi password có rủi ro gì?"
+    ]
+  },
+  {
+    "id": "flex-install-agent",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "FlexServer cài Go agent từ xa như thế nào?",
+    "a": "Backend kết nối tới VPS bằng SSH.\n\nNó tạo thư mục, upload binary của Go agent và file config, sau đó chạy agent một lần để kiểm tra.\n\nNếu kiểm tra thành công, backend start agent chạy nền và cập nhật trạng thái job.",
+    "choices": [
+      "Backend dùng SSH để upload agent/config, chạy kiểm tra rồi start agent.",
+      "Frontend copy source code Go vào browser.",
+      "Agent được cài bằng PostgreSQL trigger.",
+      "Backend chỉ gửi email hướng dẫn user cài thủ công."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Nếu quá trình cài agent bị lỗi thì sao?"
+    ]
+  },
+  {
+    "id": "flex-agent-metrics",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Go agent gửi metrics về backend theo flow nào?",
+    "a": "Agent lấy metrics từ VPS rồi gửi HTTP POST tới `/api/agent/metrics`.\n\nRequest có Bearer token riêng của agent. Backend kiểm tra token, xác định VPS tương ứng rồi lưu metrics.\n\nAgent gửi các thông tin như CPU, RAM, disk, network và uptime.",
+    "choices": [
+      "Agent collect metrics rồi POST tới backend bằng token riêng.",
+      "Backend SSH vào VPS mỗi giây để đọc CPU.",
+      "Frontend trực tiếp đọc /proc trên VPS.",
+      "Agent ghi metrics thẳng vào browser."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Nếu agent không gửi được metrics thì sao?"
+    ]
+  },
+  {
+    "id": "flex-agent-token",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Agent token trong FlexServer được bảo vệ như thế nào?",
+    "a": "Raw token chỉ được trả ra khi tạo credential.\n\nBackend không lưu secret gốc mà chỉ lưu hash của secret. Khi agent gửi request, backend hash secret nhận được rồi so sánh với giá trị đã lưu.\n\nToken không được ghi vào log và có thể bị revoke khi không còn hợp lệ.",
+    "choices": [
+      "Backend chỉ lưu hash của secret, không lưu raw token và token có thể bị revoke.",
+      "Backend lưu raw token trong log để debug.",
+      "Token được hard-code trong frontend.",
+      "Agent không cần authentication."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Tại sao không lưu raw token?"
+    ]
+  },
+  {
+    "id": "flex-sse",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Tại sao FlexServer dùng SSE cho monitoring?",
+    "a": "Monitoring chủ yếu cần server gửi dữ liệu xuống browser như metrics và job progress.\n\nSSE phù hợp vì đây chủ yếu là giao tiếp một chiều và browser có thể giữ một kết nối để nhận update liên tục.\n\nTrong FlexServer, SSE được dùng cho metrics, jobs và các monitoring event.",
+    "choices": [
+      "Vì monitoring chủ yếu cần server đẩy update một chiều xuống browser.",
+      "Vì SSE cho phép browser chạy SSH command trực tiếp.",
+      "Vì SSE bắt buộc khi dùng React.",
+      "Vì WebSocket không thể truyền dữ liệu."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Tại sao terminal lại không dùng SSE?"
+    ]
+  },
+  {
+    "id": "flex-sse-websocket",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "Tại sao FlexServer dùng SSE cho monitoring nhưng WebSocket cho terminal?",
+    "a": "Monitoring chủ yếu cần server gửi dữ liệu xuống browser nên SSE là đủ.\n\nTerminal cần hai chiều: browser gửi phím/lệnh xuống server và server phải trả output từ SSH về browser.\n\nVì vậy FlexServer dùng WebSocket cho terminal.",
+    "choices": [
+      "SSE phù hợp cho monitoring một chiều, còn terminal cần giao tiếp hai chiều nên dùng WebSocket.",
+      "SSE chỉ hoạt động với PostgreSQL.",
+      "WebSocket chỉ dùng để lưu metrics.",
+      "Hai công nghệ được dùng hoàn toàn ngẫu nhiên."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "flex-terminal-flow",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Web terminal của FlexServer hoạt động như thế nào?",
+    "a": "Browser mở WebSocket tới backend.\n\nBackend kiểm tra session và VPS, sau đó lấy SSH key và mở SSH shell tới VPS bằng `ssh2`.\n\nDữ liệu user nhập được gửi qua WebSocket tới SSH shell, còn output từ VPS được gửi ngược về browser.",
+    "choices": [
+      "Browser ↔ WebSocket ↔ backend ↔ SSH ↔ VPS.",
+      "Browser kết nối trực tiếp SSH tới VPS mà không qua backend.",
+      "Terminal sử dụng SSE cho cả input và output.",
+      "Terminal chạy command trực tiếp trong database."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Khi client disconnect thì backend xử lý SSH connection thế nào?"
+    ]
+  },
+  {
+    "id": "flex-storage",
+    "category": "FlexServer",
+    "difficulty": "medium",
+    "q": "FlexServer lưu dữ liệu bằng gì?",
+    "a": "FlexServer hỗ trợ cả JSON storage và PostgreSQL.\n\nCác service làm việc qua repository, nên có thể chọn implementation tương ứng với cấu hình mà không phải thay đổi controller hoặc phần lớn business logic.\n\nChạy đơn giản có thể dùng JSON; Docker Compose của project sử dụng PostgreSQL.",
+    "choices": [
+      "Hỗ trợ JSON hoặc PostgreSQL thông qua repository.",
+      "Chỉ hỗ trợ Redis.",
+      "Chỉ lưu dữ liệu trong memory.",
+      "Go agent tự lưu toàn bộ dữ liệu vào browser."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Tại sao lại dùng repository thay vì gọi PostgreSQL trực tiếp ở controller?"
+    ]
+  },
+  {
+    "id": "flex-job-restart",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Nếu backend restart khi một background job đang chạy thì sao?",
+    "a": "Hiện tại JobRunner của FlexServer chạy trong process của backend.\n\nVì vậy nếu backend restart giữa lúc job đang chạy thì phần thực thi của job đó có thể bị mất. Đây là một limitation hiện tại của project.\n\nNếu cần production ổn định hơn, có thể chuyển phần job sang một queue và worker có lưu trạng thái bền vững.",
+    "choices": [
+      "Job đang thực thi có thể bị mất vì JobRunner hiện chạy trong process backend.",
+      "Job chắc chắn tiếp tục vì JavaScript tự lưu execution vào PostgreSQL.",
+      "Go agent tự khởi động lại mọi backend job.",
+      "Backend restart không bao giờ ảnh hưởng job."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Bạn sẽ cải thiện limitation này như thế nào?"
+    ]
+  },
+  {
+    "id": "flex-docker-security",
+    "category": "FlexServer",
+    "difficulty": "hard",
+    "q": "Tại sao NestJS backend không truy cập trực tiếp Docker socket trên VPS?",
+    "a": "Docker socket có quyền rất lớn trên máy host.\n\nFlexServer để Go agent trên chính VPS thực hiện các Docker operation đã được backend cho phép. Backend chỉ tạo operation, còn agent lấy operation, thực hiện rồi báo kết quả lại.\n\nNhư vậy backend trung tâm không cần trực tiếp mở Docker socket của từng VPS.",
+    "choices": [
+      "Để giới hạn quyền của backend; Docker operation được thực hiện bởi agent trên VPS.",
+      "Vì Docker socket chỉ hoạt động với React.",
+      "Vì NestJS không thể gửi HTTP request.",
+      "Vì PostgreSQL tự quản lý Docker thay backend."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Agent được phép thực hiện những Docker action nào?"
+    ]
   }
 ];
