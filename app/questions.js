@@ -1553,5 +1553,526 @@ window.INTERVIEW_QUESTIONS = [
     "follow": [
       "Readiness check khác liveness check thế nào?"
     ]
+  },
+  {
+    "id": "node-closure-practical",
+    "category": "Node.js",
+    "difficulty": "medium",
+    "q": "Closure trong JavaScript là gì? Dùng khi nào?",
+    "a": "Closure là khi một function vẫn truy cập được biến ở scope bên ngoài, kể cả sau khi function ngoài đã chạy xong. Em dùng closure để giữ state riêng, ví dụ tạo bộ đếm hoặc cấu hình callback.",
+    "choices": [
+      "Function có thể nhớ và truy cập biến từ scope nơi nó được tạo.",
+      "Function chỉ chạy được một lần.",
+      "Function luôn tạo thread mới.",
+      "Function không được đọc biến bên ngoài."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Closure có thể gây memory leak khi nào?"
+    ]
+  },
+  {
+    "id": "node-hoisting-let-var",
+    "category": "Node.js",
+    "difficulty": "easy",
+    "q": "var, let và const khác nhau thế nào về scope và hoisting?",
+    "a": "var có function scope, còn let và const có block scope. Cả ba đều được hoist, nhưng let/const không thể truy cập trước khi khai báo. const không được gán lại biến, nhưng object bên trong vẫn có thể thay đổi.",
+    "choices": [
+      "var có function scope; let/const có block scope và vùng không thể truy cập trước khi khai báo.",
+      "let và const không có hoisting.",
+      "const khiến mọi object bất biến hoàn toàn.",
+      "var chỉ tồn tại trong block if."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "node-commonjs-esm",
+    "category": "Node.js",
+    "difficulty": "medium",
+    "q": "CommonJS và ES Modules trong Node.js khác nhau thế nào?",
+    "a": "CommonJS thường dùng require/module.exports, còn ES Modules dùng import/export. Khi làm dự án Node.js mới, em ưu tiên theo module system mà project đã cấu hình để tránh lỗi import và build.",
+    "choices": [
+      "CommonJS dùng require; ES Modules dùng import/export.",
+      "CommonJS chỉ dành cho frontend.",
+      "ES Modules không chạy được trong Node.js.",
+      "Cả hai là database driver."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "node-stream-backpressure",
+    "category": "Node.js",
+    "difficulty": "hard",
+    "q": "Backpressure trong Node.js Stream là gì?",
+    "a": "Backpressure xảy ra khi bên ghi/xử lý nhận dữ liệu chậm hơn bên đọc gửi dữ liệu. Nếu cứ gửi tiếp, dữ liệu sẽ dồn trong RAM. Em dùng pipe/pipeline hoặc chờ tín hiệu drain để kiểm soát tốc độ.",
+    "choices": [
+      "Cơ chế giảm tốc độ đọc/gửi khi bên nhận xử lý không kịp.",
+      "Cơ chế tự động tăng số CPU core.",
+      "Một loại lỗi cú pháp trong Stream.",
+      "Việc gửi mọi chunk cùng lúc để tăng tốc."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "pipeline() có lợi ích gì so với tự dùng data event?"
+    ]
+  },
+  {
+    "id": "node-promise-all-reject",
+    "category": "Node.js",
+    "difficulty": "medium",
+    "q": "Nếu một Promise trong Promise.all bị reject thì chuyện gì xảy ra?",
+    "a": "Promise.all reject ngay khi một Promise thành phần reject. Các tác vụ khác không tự động bị hủy và có thể vẫn chạy. Nếu cần kết quả của tất cả tác vụ bất kể lỗi, em dùng Promise.allSettled.",
+    "choices": [
+      "Promise.all reject, nhưng các tác vụ khác không tự động bị hủy.",
+      "Tất cả Promise khác tự động được cancel.",
+      "Promise.all luôn trả kết quả thành công của các Promise còn lại.",
+      "Node.js lập tức restart process."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "node-memory-leak-debug",
+    "category": "Node.js",
+    "difficulty": "hard",
+    "q": "Node.js bị tăng memory liên tục thì em debug như thế nào?",
+    "a": "Em kiểm tra memory theo thời gian, xem heap usage và so sánh heap snapshot để tìm object còn bị giữ tham chiếu. Sau đó kiểm tra cache không giới hạn, listener, timer hoặc dữ liệu lớn bị lưu lâu. Fix rồi đo lại để xác nhận.",
+    "choices": [
+      "Đo memory, dùng heap snapshot tìm object bị giữ, sửa nguồn giữ tham chiếu rồi kiểm tra lại.",
+      "Restart app định kỳ là đủ để loại bỏ nguyên nhân.",
+      "Tăng RAM thì chắc chắn hết leak.",
+      "Tắt garbage collector để tiết kiệm CPU."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Buffer memory khác heap memory thế nào?"
+    ]
+  },
+  {
+    "id": "api-webhook-signature",
+    "category": "REST API",
+    "difficulty": "medium",
+    "q": "Khi nhận webhook từ bên thứ ba, làm sao xác minh request là hợp lệ?",
+    "a": "Nếu nhà cung cấp hỗ trợ, backend kiểm tra chữ ký webhook bằng secret đã cấu hình và dữ liệu request gốc. Đồng thời kiểm tra timestamp để giảm nguy cơ replay. Không nên chỉ tin một field như sender_id trong body.",
+    "choices": [
+      "Kiểm tra chữ ký từ provider trên raw payload và các thông tin chống replay nếu có.",
+      "Chỉ cần endpoint URL khó đoán.",
+      "Tin mọi request có Content-Type JSON.",
+      "Chỉ so sánh tên provider trong body."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Vì sao cần giữ raw body để verify chữ ký?"
+    ]
+  },
+  {
+    "id": "api-webhook-duplicate",
+    "category": "REST API",
+    "difficulty": "hard",
+    "q": "Webhook được gửi lại hai lần thì làm sao tránh xử lý trùng?",
+    "a": "Em dùng event ID hoặc transaction ID làm khóa idempotency. Trước khi cập nhật order, backend kiểm tra event đã xử lý chưa, tốt nhất bảo vệ bằng unique constraint hoặc transaction. Nếu đã xử lý thì trả kết quả thành công mà không chạy business logic lại.",
+    "choices": [
+      "Dùng idempotency key và ràng buộc ở database để một event không được xử lý hai lần.",
+      "Chỉ so sánh thời gian nhận request trong RAM.",
+      "Tin rằng nhà cung cấp sẽ không retry.",
+      "Cho phép tạo hai order rồi xóa một order sau."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Vì sao dùng in-memory Set không an toàn khi có nhiều instance?"
+    ]
+  },
+  {
+    "id": "api-pagination-cursor-offset",
+    "category": "REST API",
+    "difficulty": "medium",
+    "q": "Offset pagination và cursor pagination khác nhau thế nào?",
+    "a": "Offset dùng limit/offset nên dễ làm trang có số thứ tự, nhưng khi dữ liệu lớn hoặc có bản ghi mới thì có thể chậm và bị lệch. Cursor lấy tiếp từ một mốc ổn định, phù hợp danh sách lớn hoặc feed.",
+    "choices": [
+      "Offset dựa vào vị trí hàng; cursor dựa vào mốc tiếp theo nên thường phù hợp dữ liệu lớn.",
+      "Cursor luôn query toàn bộ bảng.",
+      "Offset bắt buộc phải dùng Redis.",
+      "Hai cách luôn cho kết quả giống nhau khi dữ liệu thay đổi."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "api-openapi-swagger",
+    "category": "REST API",
+    "difficulty": "easy",
+    "q": "OpenAPI/Swagger có vai trò gì khi phát triển REST API?",
+    "a": "OpenAPI mô tả endpoint, request, response và cách authentication theo một chuẩn thống nhất. Swagger UI giúp frontend và QA xem tài liệu, thử API và giảm hiểu sai giữa các team.",
+    "choices": [
+      "Chuẩn hóa tài liệu contract API để các team hiểu và thử endpoint.",
+      "Thay thế hoàn toàn backend logic.",
+      "Tự động mã hóa mọi request.",
+      "Là một loại message queue."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "api-long-task-job",
+    "category": "REST API",
+    "difficulty": "medium",
+    "q": "Một API phải xử lý công việc mất vài phút thì nên thiết kế thế nào?",
+    "a": "Em không giữ HTTP request mở quá lâu. Backend tạo job, trả jobId sớm; worker xử lý và lưu trạng thái. Frontend kiểm tra status hoặc nhận tiến độ qua SSE/WebSocket.",
+    "choices": [
+      "Trả jobId sớm và xử lý công việc ở background, có endpoint hoặc stream xem trạng thái.",
+      "Giữ request chờ vô hạn.",
+      "Chuyển toàn bộ task nặng sang browser.",
+      "Luôn đặt timeout bằng 0."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Nếu backend restart giữa job thì xử lý thế nào?"
+    ]
+  },
+  {
+    "id": "db-explain-analyze",
+    "category": "Database",
+    "difficulty": "medium",
+    "q": "EXPLAIN và EXPLAIN ANALYZE trong PostgreSQL khác nhau thế nào?",
+    "a": "EXPLAIN cho biết kế hoạch thực thi dự kiến. EXPLAIN ANALYZE thực sự chạy query và cho biết thời gian cùng số row đã xử lý. Em dùng chúng khi query chậm để xem có scan quá nhiều row, join tốn chi phí hoặc index không được dùng.",
+    "choices": [
+      "EXPLAIN xem plan dự kiến; EXPLAIN ANALYZE thực chạy và đo hiệu năng.",
+      "Cả hai đều chỉ kiểm tra syntax.",
+      "EXPLAIN ANALYZE luôn tạo index mới.",
+      "EXPLAIN luôn chạy và cập nhật dữ liệu."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Vì sao phải cẩn thận khi chạy EXPLAIN ANALYZE với UPDATE/DELETE?"
+    ]
+  },
+  {
+    "id": "db-composite-index",
+    "category": "Database",
+    "difficulty": "hard",
+    "q": "Composite index trong PostgreSQL nên chọn thứ tự cột như thế nào?",
+    "a": "Em dựa vào điều kiện WHERE, JOIN, ORDER BY và tần suất query. Với B-tree index, thứ tự cột ảnh hưởng việc index được tận dụng; các cột lọc bằng dấu bằng thường đặt trước cột range. Sau đó dùng EXPLAIN ANALYZE để kiểm tra.",
+    "choices": [
+      "Chọn theo mẫu query thực tế và xác nhận bằng EXPLAIN ANALYZE.",
+      "Luôn sắp tên cột theo alphabet.",
+      "Cứ index mọi cột là tối ưu.",
+      "Thứ tự cột trong composite index không ảnh hưởng truy vấn."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "db-row-lock-for-update",
+    "category": "Database",
+    "difficulty": "hard",
+    "q": "SELECT ... FOR UPDATE được dùng khi nào?",
+    "a": "Đây là row-level lock trong transaction. Khi cần đọc rồi cập nhật cùng một bản ghi, em khóa row để transaction khác không sửa row đó đồng thời. Phải giữ transaction ngắn và luôn kiểm tra lại điều kiện sau khi lấy lock.",
+    "choices": [
+      "Khóa các row được chọn trong transaction trước khi cập nhật để tránh race condition.",
+      "Khóa toàn bộ database vĩnh viễn.",
+      "Chỉ dùng để tăng tốc SELECT.",
+      "Không cần transaction vẫn giữ lock được lâu dài."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "SELECT FOR UPDATE khác distributed Redis lock thế nào?"
+    ]
+  },
+  {
+    "id": "redis-distributed-lock",
+    "category": "Redis",
+    "difficulty": "hard",
+    "q": "Tại sao in-memory lock không đủ khi Node.js chạy nhiều backend instance?",
+    "a": "Mỗi instance có RAM riêng nên BE1 và BE2 có thể cùng lấy lock với một key. Với tác vụ phải đồng bộ giữa các instance, em dùng locking provider dùng chung như Redis hoặc khóa ở database. Lock còn cần TTL và cách xử lý khi instance bị crash.",
+    "choices": [
+      "Vì lock trong RAM chỉ có tác dụng với một instance; phải dùng cơ chế shared lock hoặc DB.",
+      "Vì Redis không hỗ trợ kết nối TCP.",
+      "Vì HAProxy tự chia sẻ mọi biến trong RAM.",
+      "Vì Promise tự đồng bộ giữa các process."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Lock TTL hết khi công việc chưa xong thì có rủi ro gì?"
+    ]
+  },
+  {
+    "id": "ai-prompt-roles",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "System prompt, user prompt và retrieved context khác nhau thế nào?",
+    "a": "System prompt đặt quy tắc cho model; user prompt là câu hỏi/yêu cầu từ người dùng; retrieved context là tài liệu RAG tìm được để model tham khảo. Em tách rõ ba phần, không coi nội dung tài liệu là chỉ thị điều khiển model.",
+    "choices": [
+      "System prompt đặt quy tắc, user prompt đặt yêu cầu, context cung cấp thông tin tham khảo.",
+      "Cả ba đều là database transaction.",
+      "Retrieved context luôn đáng tin như system prompt.",
+      "System prompt chính là embedding vector."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "ai-few-shot",
+    "category": "RAG",
+    "difficulty": "easy",
+    "q": "Few-shot prompting là gì và khi nào nên dùng?",
+    "a": "Few-shot prompting là đưa vài ví dụ input/output vào prompt để model hiểu cách trả lời mong muốn. Em dùng khi cần model giữ format, phong cách hoặc quy tắc phân loại nhất quán hơn.",
+    "choices": [
+      "Đưa một vài ví dụ vào prompt để hướng dẫn cách model phản hồi.",
+      "Bắt buộc fine-tune model trước khi gọi API.",
+      "Giảm kích thước embedding bằng cách cắt vector.",
+      "Chỉ áp dụng cho dữ liệu hình ảnh."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "ai-structured-output",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Làm sao yêu cầu LLM trả về JSON ổn định để backend xử lý?",
+    "a": "Em mô tả schema rõ ràng và ưu tiên structured output/schema mode nếu model hỗ trợ. Backend vẫn phải validate JSON nhận được, kiểm tra field bắt buộc và xử lý trường hợp model trả thiếu hoặc sai kiểu dữ liệu.",
+    "choices": [
+      "Yêu cầu theo schema và vẫn validate kết quả ở backend.",
+      "Chỉ cần thêm chữ JSON vào prompt là không bao giờ sai.",
+      "Dùng JSON.parse rồi mặc định tin mọi field.",
+      "Bỏ bước validation để giảm latency."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Nếu output không đúng schema thì xử lý thế nào?"
+    ]
+  },
+  {
+    "id": "ai-tool-calling",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Tool calling của LLM khác RAG như thế nào?",
+    "a": "RAG tìm tài liệu làm ngữ cảnh để trả lời. Tool calling cho phép model yêu cầu hệ thống thực hiện thao tác được định nghĩa sẵn, như tra đơn hàng hoặc gọi API. Backend phải kiểm tra tham số và quyền trước khi thực thi tool.",
+    "choices": [
+      "RAG lấy kiến thức từ tài liệu; tool calling yêu cầu thực hiện một công cụ/API cụ thể.",
+      "Tool calling luôn tự sửa được hallucination.",
+      "RAG bắt buộc phải gọi shell command.",
+      "Tool calling không cần kiểm tra permission."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "ai-embedding-consistency",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Vì sao document và câu hỏi phải dùng embedding tương thích?",
+    "a": "Vector của tài liệu và câu hỏi phải cùng không gian biểu diễn thì similarity search mới có ý nghĩa. Em thường dùng cùng embedding model cho cả lúc index và query; khi đổi model có thể phải tạo lại embeddings của tài liệu.",
+    "choices": [
+      "Để các vector nằm trong cùng không gian và so sánh similarity được.",
+      "Vì LLM không thể đọc văn bản.",
+      "Vì vector không được lưu trong PostgreSQL.",
+      "Vì mọi embedding model luôn cho vector giống hệt nhau."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "ai-chunk-overlap",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Chunk overlap trong RAG là gì? Vì sao cần?",
+    "a": "Chunk overlap là cho hai đoạn tài liệu liền nhau có một phần nội dung trùng. Nó giúp hạn chế mất ý khi câu hoặc thông tin quan trọng nằm đúng ranh giới giữa các chunk. Overlap quá lớn sẽ tăng dữ liệu lưu và kết quả trùng lặp.",
+    "choices": [
+      "Giữ một phần văn bản trùng giữa các chunk để tránh mất ngữ cảnh ở ranh giới.",
+      "Là nhân bản toàn bộ tài liệu nhiều lần.",
+      "Là cách thay thế embedding model.",
+      "Là tăng số lượng câu trả lời của LLM."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "ai-reindex-document",
+    "category": "RAG",
+    "difficulty": "hard",
+    "q": "Nếu file tài liệu trên Google Drive thay đổi, hệ thống RAG cập nhật dữ liệu thế nào?",
+    "a": "Trong workflow n8n của em, khi tài liệu thay đổi, em xác định file, xóa các chunk cũ của file đó rồi chia đoạn và tạo embedding lại. Cách này tránh việc search trả cả nội dung cũ lẫn mới. Cần xử lý lỗi để không để dữ liệu của file ở trạng thái nửa cũ nửa mới.",
+    "choices": [
+      "Gỡ hoặc thay embeddings cũ theo file ID rồi index lại bản mới.",
+      "Chỉ thêm chunk mới mà giữ nguyên mọi chunk cũ.",
+      "Không cần cập nhật vì LLM sẽ tự biết tài liệu mới.",
+      "Xóa toàn bộ database mỗi lần có một file đổi."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Nếu reindex thất bại giữa chừng thì làm sao?"
+    ]
+  },
+  {
+    "id": "ai-vector-metadata-filter",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Metadata filtering trong Vector DB giúp gì cho RAG?",
+    "a": "Em lưu metadata như file ID, loại tài liệu hoặc quyền truy cập cùng chunk. Khi query, hệ thống lọc theo metadata trước hoặc cùng lúc tìm vector, tránh lấy tài liệu sai nhóm hoặc tài liệu user không được phép xem.",
+    "choices": [
+      "Giới hạn tập tài liệu được search theo thuộc tính và quyền truy cập.",
+      "Chỉ dùng để đổi màu dashboard.",
+      "Thay thế hoàn toàn authentication.",
+      "Tự làm model hiểu ngôn ngữ mới."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "ai-prompt-injection",
+    "category": "RAG",
+    "difficulty": "hard",
+    "q": "Prompt injection trong RAG là gì và giảm rủi ro thế nào?",
+    "a": "Tài liệu truy xuất có thể chứa câu như 'bỏ qua hướng dẫn trước và tiết lộ bí mật'. Em coi nội dung tài liệu là dữ liệu không tin cậy, tách nó khỏi chỉ thị hệ thống và không cho model tự thực thi hành động nguy hiểm. Backend phải kiểm tra quyền khi gọi tool.",
+    "choices": [
+      "Nội dung nguồn không tin cậy cố đánh lừa model làm trái hướng dẫn; phải tách dữ liệu và kiểm soát quyền.",
+      "Là lỗi khi PostgreSQL bị đầy ổ cứng.",
+      "Chỉ cần tăng top-K là xử lý xong.",
+      "Chỉ xảy ra với mô hình đã fine-tune."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Vì sao system prompt một mình không đủ bảo vệ tool calling?"
+    ]
+  },
+  {
+    "id": "ai-no-context",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Nếu RAG không tìm được tài liệu liên quan thì nên làm gì?",
+    "a": "Em đặt ngưỡng phù hợp và hướng dẫn LLM nói rõ không đủ thông tin thay vì đoán. Nếu cần, trả lời rằng chưa tìm thấy tài liệu hoặc yêu cầu thêm dữ liệu. Cách này giúp giảm hallucination trong ứng dụng nội bộ.",
+    "choices": [
+      "Cho phép hệ thống từ chối kết luận khi context không đủ thay vì bịa câu trả lời.",
+      "Bắt buộc LLM tạo một câu trả lời tự tin.",
+      "Lấy ngẫu nhiên chunk bất kỳ.",
+      "Ẩn toàn bộ thông tin nguồn khỏi user."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "ai-rag-evaluation",
+    "category": "RAG",
+    "difficulty": "hard",
+    "q": "Làm sao đánh giá chất lượng của một hệ thống RAG?",
+    "a": "Em chuẩn bị bộ câu hỏi có đáp án/tài liệu chuẩn rồi kiểm tra hai phần: retrieval có lấy đúng chunk không, và LLM có trả lời đúng theo context không. Ngoài ra theo dõi latency, chi phí và câu trả lời không có nguồn để điều chỉnh chunking, top-K và prompt.",
+    "choices": [
+      "Đánh giá riêng chất lượng retrieval và câu trả lời, rồi theo dõi latency/chi phí.",
+      "Chỉ đếm tổng số lần gọi LLM.",
+      "Chỉ đo kích thước database.",
+      "Chỉ cần model trả lời dài là đạt."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Khi retrieval đúng nhưng LLM trả sai thì debug phần nào?"
+    ]
+  },
+  {
+    "id": "ai-n8n-vs-code",
+    "category": "RAG",
+    "difficulty": "medium",
+    "q": "Khi nào chọn n8n workflow thay vì tự viết backend Node.js?",
+    "a": "Em chọn n8n cho các luồng tích hợp nhiều service, trigger theo sự kiện và cần chỉnh flow nhanh. Khi yêu cầu business logic phức tạp, hiệu năng cao hoặc kiểm thử/versioning chặt, em cân nhắc đưa phần xử lý chính vào service Node.js. Hai cách cũng có thể kết hợp.",
+    "choices": [
+      "n8n phù hợp orchestration và tích hợp nhanh; code phù hợp logic phức tạp hoặc cần kiểm soát sâu.",
+      "n8n thay thế hoàn toàn database.",
+      "Node.js không thể gọi API bên ngoài.",
+      "n8n luôn nhanh hơn code trong mọi trường hợp."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "devops-docker-image-container",
+    "category": "Production",
+    "difficulty": "easy",
+    "q": "Docker image và Docker container khác nhau thế nào?",
+    "a": "Image là gói chứa code, dependency và cấu hình cần thiết để chạy app. Container là instance đang chạy được tạo từ image. Một image có thể tạo nhiều container.",
+    "choices": [
+      "Image là bản đóng gói; container là instance được tạo và chạy từ image.",
+      "Image là tiến trình đang chạy, container là Dockerfile.",
+      "Mỗi image chỉ chạy được đúng một container.",
+      "Container luôn chứa một hệ điều hành đầy đủ như VM."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "devops-compose-network",
+    "category": "Production",
+    "difficulty": "medium",
+    "q": "Trong Docker Compose, backend kết nối PostgreSQL ở container khác bằng cách nào?",
+    "a": "Các service trong cùng Compose network thường gọi nhau bằng service name, ví dụ host 'postgres' với port nội bộ 5432. Không dùng localhost để gọi container khác, vì localhost trong container trỏ về chính container đó.",
+    "choices": [
+      "Dùng service name làm hostname trong cùng Docker network.",
+      "Dùng localhost trong backend để đi tới mọi container.",
+      "Bắt buộc gắn IP public cho database.",
+      "Chỉ có thể kết nối qua SSH."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Vì sao không nên publish port PostgreSQL công khai?"
+    ]
+  },
+  {
+    "id": "devops-docker-crash-debug",
+    "category": "Production",
+    "difficulty": "medium",
+    "q": "Container Docker cứ restart liên tục thì em kiểm tra gì?",
+    "a": "Em xem docker ps -a, docker logs và inspect để biết exit code, healthcheck hoặc lỗi cấu hình. Tiếp theo kiểm tra environment, kết nối DB, memory và volume. Sửa nguyên nhân rồi deploy lại, không chỉ restart lặp lại.",
+    "choices": [
+      "Xem trạng thái, logs, exit code và cấu hình/tài nguyên trước khi sửa.",
+      "Xóa database trước để dọn bộ nhớ.",
+      "Tăng restart policy là chắc chắn hết lỗi.",
+      "Chỉ kiểm tra CSS frontend."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "devops-linux-port",
+    "category": "Production",
+    "difficulty": "easy",
+    "q": "Trên Linux làm sao kiểm tra process nào đang chiếm port 3000?",
+    "a": "Em dùng `ss -ltnp` để xem socket đang listen hoặc `lsof -i :3000` để xác định process. Sau đó xem service logs và cấu hình port trước khi restart/stop process.",
+    "choices": [
+      "Dùng ss hoặc lsof để kiểm tra process listen trên port.",
+      "Dùng ping 3000 để xem PID.",
+      "Mở Chrome trên VPS là đủ.",
+      "Xóa thư mục node_modules để giải phóng port."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "devops-linux-resources",
+    "category": "Production",
+    "difficulty": "medium",
+    "q": "Khi server Linux chậm, em kiểm tra CPU, RAM và disk như thế nào?",
+    "a": "Em dùng top/htop để xem CPU và process, free -h để xem RAM, df -h để xem disk. Sau đó đối chiếu thời điểm lỗi với logs và metrics của container/app để tìm nguyên nhân thay vì đoán.",
+    "choices": [
+      "Dùng top/htop, free -h, df -h rồi đối chiếu log/metrics.",
+      "Chỉ kiểm tra DNS.",
+      "Luôn restart PostgreSQL trước.",
+      "Chỉ xem version Node.js."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "devops-nginx-routing",
+    "category": "Production",
+    "difficulty": "medium",
+    "q": "Một VPS chạy hai Node.js app thì Nginx chuyển request tới đúng app thế nào?",
+    "a": "Em trỏ DNS của các domain về IP VPS. Nginx dựa vào server_name hoặc path để reverse proxy tới port nội bộ của từng app, ví dụ 3000 và 4000. Sau đó cấu hình HTTPS cho từng domain.",
+    "choices": [
+      "Nginx định tuyến theo domain hoặc path tới port nội bộ của ứng dụng.",
+      "Mỗi domain bắt buộc có một VPS riêng.",
+      "DNS tự gọi trực tiếp Node.js controller theo path.",
+      "Mọi app phải cùng listen port 443."
+    ],
+    "correctIndex": 0
+  },
+  {
+    "id": "devops-cicd-rollback",
+    "category": "Production",
+    "difficulty": "hard",
+    "q": "Deploy phiên bản mới bị lỗi production thì rollback thế nào?",
+    "a": "Em xem log và healthcheck để xác định bản mới lỗi, rồi triển khai lại image/tag hoặc commit đã hoạt động tốt. Cần kiểm tra database migration có tương thích bản cũ không trước khi rollback. Sau đó theo dõi metrics để xác nhận hệ thống ổn định.",
+    "choices": [
+      "Triển khai lại version ổn định và kiểm tra tương thích database migration.",
+      "Rollback chỉ cần xóa database mới.",
+      "Luôn sửa code trực tiếp trong container production.",
+      "Chỉ cần đổi tên Docker container."
+    ],
+    "correctIndex": 0,
+    "follow": [
+      "Nếu migration đã xóa một column thì rollback code có an toàn không?"
+    ]
   }
 ];
