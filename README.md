@@ -10,6 +10,7 @@ Repo có một web app tĩnh trong thư mục [app](./app/):
 - tìm kiếm câu hỏi
 - random question
 - mock interview 10 câu
+- thêm 30 flashcard CI/CD có đáp án trắc nghiệm và câu hỏi follow-up
 - ẩn/hiện đáp án
 - đánh dấu Easy / Medium / Hard
 - lưu progress bằng localStorage
@@ -34,7 +35,7 @@ Bạn cũng có thể publish thư mục `app/` bằng GitHub Pages nếu muốn
 - [Production Debugging & System Basics](./05-system-debugging.md)
 - [PostGifty / past-prj](./06-postgifty.md)
 - [RAG Document Assistant](./07-rag-ai.md)
-- [Frontend & DevOps](./08-frontend-devops.md)
+- [Frontend & DevOps — gồm 30 câu hỏi CI/CD (GitHub Actions, Docker, deployment, security, troubleshooting)](./08-frontend-devops.md)
 - [High Priority Questions](./09-high-priority.md)
 
 ## Cách ôn
